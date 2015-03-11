@@ -79,10 +79,8 @@ CREATE TABLE `company` (
 	`id` INT UNSIGNED,
     `name` VARCHAR(255) NOT NULL,
     `country_id` INT UNSIGNED NULL,
-    `type_id` INT UNSIGNED NOT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE KEY `un_name_country` (`name`, `country_id`),
-    KEY `idx_type` (`type_id`)
+    UNIQUE KEY `un_name_country` (`name`, `country_id`)
 );
 
 CREATE TABLE `country` (
@@ -97,6 +95,14 @@ CREATE TABLE `type` (
     `name` VARCHAR(255) NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE KEY `un_name` (`name`)
+);
+
+CREATE TABLE `companytype` (
+	`id` INT UNSIGNED,
+    `company_id` INT UNSIGNED NOT NULL,
+    `type_id` INT UNSIGNED NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `un_company_type` (`company_id`,`type_id`)
 );
 
 CREATE TABLE `singleproduction` (
@@ -152,8 +158,10 @@ ALTER TABLE `casting`
 ALTER TABLE `title`
 	ADD CONSTRAINT `fk_titletoproduction` FOREIGN KEY (`production_id`) REFERENCES `production` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `company`
-	ADD CONSTRAINT `fk_companyhascountry` FOREIGN KEY (`country_id`) REFERENCES `country` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-    ADD CONSTRAINT `fk_companyhastype` FOREIGN KEY (`type_id`) REFERENCES `type` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+	ADD CONSTRAINT `fk_companyhascountry` FOREIGN KEY (`country_id`) REFERENCES `country` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `companytype`
+	ADD CONSTRAINT `fk_companyhastype_company` FOREIGN KEY (`company_id`) REFERENCES `company` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    ADD CONSTRAINT `fk_companyhastype_type` FOREIGN KEY (`type_id`) REFERENCES `type` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 ALTER TABLE `season`
 	ADD CONSTRAINT `fk_seasonhasserie` FOREIGN KEY (`serie_id`) REFERENCES `serie` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `episode`
