@@ -51,7 +51,7 @@ CREATE TABLE `production` (
 );
 
 CREATE TABLE `casting` (
-	`id` INT UNSIGNED,
+	`id` INT UNSIGNED AUTO_INCREMENT,
     `person_id` INT UNSIGNED NOT NULL,
     `production_id` INT UNSIGNED NOT NULL,
     `role_id` INT UNSIGNED NOT NULL,
@@ -98,7 +98,7 @@ CREATE TABLE `type` (
 );
 
 CREATE TABLE `companytype` (
-	`id` INT UNSIGNED,
+	`id` INT UNSIGNED AUTO_INCREMENT,
     `company_id` INT UNSIGNED NOT NULL,
     `type_id` INT UNSIGNED NOT NULL,
     PRIMARY KEY (`id`),
@@ -134,7 +134,7 @@ CREATE TABLE `episode` (
 );
 
 CREATE TABLE `productioncompany` (
-	`id` INT UNSIGNED,
+	`id` INT UNSIGNED AUTO_INCREMENT,
     `production_id` INT UNSIGNED NOT NULL,
     `company_id` INT UNSIGNED NOT NULL,
     PRIMARY KEY (`id`),
