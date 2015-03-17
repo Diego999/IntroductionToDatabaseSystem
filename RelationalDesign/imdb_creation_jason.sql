@@ -1,7 +1,7 @@
 -- 1. Create tables with unlinked columns, primary keys, unique indexes and simple indexes on future foreign keys
 
 CREATE TABLE `name` (
-	`id` INT UNSIGNED,
+	`id` INT UNSIGNED AUTO_INCREMENT,
     `firstname` VARCHAR(255) NULL,
     `lastname` VARCHAR(255) NOT NULL,
     `person_id` INT UNSIGNED NOT NULL,
@@ -26,7 +26,7 @@ CREATE TABLE `person` (
 );
 
 CREATE TABLE `role` (
-	`id` INT UNSIGNED,
+	`id` INT UNSIGNED AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE KEY `un_name` (`name`)
@@ -61,7 +61,7 @@ CREATE TABLE `casting` (
 );
 
 CREATE TABLE `title` (
-	`id` INT UNSIGNED,
+	`id` INT UNSIGNED AUTO_INCREMENT,
     `title` VARCHAR(255) NOT NULL,
     `production_id` INT UNSIGNED NOT NULL,
     PRIMARY KEY (`id`),
@@ -69,7 +69,7 @@ CREATE TABLE `title` (
 );
 
 CREATE TABLE `gender` (
-	`id` INT UNSIGNED,
+	`id` INT UNSIGNED AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE KEY `un_name` (`name`)
@@ -84,14 +84,14 @@ CREATE TABLE `company` (
 );
 
 CREATE TABLE `country` (
-	`id` INT UNSIGNED,
+	`id` INT UNSIGNED AUTO_INCREMENT,
     `code` VARCHAR(2) NOT NULL,
 	PRIMARY KEY (`id`),
     UNIQUE KEY `un_code` (`code`)
 );
 
 CREATE TABLE `type` (
-	`id` INT UNSIGNED,
+	`id` INT UNSIGNED AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE KEY `un_name` (`name`)
@@ -107,11 +107,20 @@ CREATE TABLE `companytype` (
 
 CREATE TABLE `singleproduction` (
 	`id` INT UNSIGNED,
-    PRIMARY KEY (`id`)
+    `kind_id` INT UNSIGNED NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `idx_kind` (`kind_id`)
+);
+
+CREATE TABLE `kind` (
+	`id` INT UNSIGNED AUTO_INCREMENT,
+    `name` VARCHAR(255) NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `un_kind_name` (`name`)
 );
 
 CREATE TABLE `season` (
-	`id` INT UNSIGNED,
+	`id` INT UNSIGNED AUTO_INCREMENT,
     `number` INT NULL,
     `serie_id` INT UNSIGNED NOT NULL,
     PRIMARY KEY (`id`),
@@ -166,6 +175,8 @@ ALTER TABLE `season`
 	ADD CONSTRAINT `fk_seasonhasserie` FOREIGN KEY (`serie_id`) REFERENCES `serie` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `episode`
 	ADD CONSTRAINT `fk_episodehasseason` FOREIGN KEY (`season_id`) REFERENCES `season` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `singleproduction`
+	ADD CONSTRAINT `fk_singleproduction_has_kind` FOREIGN KEY (`kind_id`) REFERENCES `kind` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 ALTER TABLE `productioncompany`
 	ADD CONSTRAINT `fk_productioncompany_production` FOREIGN KEY (`production_id`) REFERENCES `production` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     ADD CONSTRAINT `fk_productioncompany_company` FOREIGN KEY (`company_id`) REFERENCES `company` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;

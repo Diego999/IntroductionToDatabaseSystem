@@ -6,6 +6,7 @@ DROP TABLE `companytype`;
 DROP TABLE `country`;
 DROP TABLE `episode`;
 DROP TABLE `gender`;
+DROP TABLE `kind`;
 DROP TABLE `name`;
 DROP TABLE `person`;
 DROP TABLE `production`;
