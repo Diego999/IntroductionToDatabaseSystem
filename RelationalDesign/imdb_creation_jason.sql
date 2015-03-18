@@ -42,7 +42,6 @@ CREATE TABLE `character` (
 CREATE TABLE `production` (
 	`id` INT UNSIGNED,
     `year` YEAR NULL,
-    `budget` INT UNSIGNED NULL,
     `title_id` INT UNSIGNED NOT NULL,
     `gender_id` INT UNSIGNED NULL,
     PRIMARY KEY (`id`),
