@@ -11,7 +11,7 @@ CREATE TABLE `name` (
 
 CREATE TABLE `person` (
 	`id` INT UNSIGNED,
-    `gender` VARCHAR(1) NOT NULL,
+    `gender` VARCHAR(1) NULL,
     `trivia` TEXT NULL,
     `quotes` TEXT NULL,
     `birthdate` DATE NULL,
@@ -96,14 +96,6 @@ CREATE TABLE `type` (
     UNIQUE KEY `un_name` (`name`)
 );
 
-CREATE TABLE `companytype` (
-	`id` INT UNSIGNED AUTO_INCREMENT,
-    `company_id` INT UNSIGNED NOT NULL,
-    `type_id` INT UNSIGNED NOT NULL,
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `un_company_type` (`company_id`,`type_id`)
-);
-
 CREATE TABLE `singleproduction` (
 	`id` INT UNSIGNED,
     `kind_id` INT UNSIGNED NOT NULL,
@@ -142,11 +134,12 @@ CREATE TABLE `episode` (
 );
 
 CREATE TABLE `productioncompany` (
-	`id` INT UNSIGNED AUTO_INCREMENT,
+	`id` INT UNSIGNED,
     `production_id` INT UNSIGNED NOT NULL,
     `company_id` INT UNSIGNED NOT NULL,
+    `type_id` INT UNSIGNED NOT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE KEY `un_production_company` (`production_id`, `company_id`)
+    UNIQUE KEY `un_production_company` (`production_id`, `company_id`, `type_id`)
 );
 
 -- 2. add all foreign keys constraints that are on schema
@@ -167,9 +160,6 @@ ALTER TABLE `title`
 	ADD CONSTRAINT `fk_titletoproduction` FOREIGN KEY (`production_id`) REFERENCES `production` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `company`
 	ADD CONSTRAINT `fk_companyhascountry` FOREIGN KEY (`country_id`) REFERENCES `country` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
-ALTER TABLE `companytype`
-	ADD CONSTRAINT `fk_companyhastype_company` FOREIGN KEY (`company_id`) REFERENCES `company` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    ADD CONSTRAINT `fk_companyhastype_type` FOREIGN KEY (`type_id`) REFERENCES `type` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 ALTER TABLE `season`
 	ADD CONSTRAINT `fk_seasonhasserie` FOREIGN KEY (`serie_id`) REFERENCES `serie` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `episode`
@@ -178,7 +168,8 @@ ALTER TABLE `singleproduction`
 	ADD CONSTRAINT `fk_singleproduction_has_kind` FOREIGN KEY (`kind_id`) REFERENCES `kind` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 ALTER TABLE `productioncompany`
 	ADD CONSTRAINT `fk_productioncompany_production` FOREIGN KEY (`production_id`) REFERENCES `production` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    ADD CONSTRAINT `fk_productioncompany_company` FOREIGN KEY (`company_id`) REFERENCES `company` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+    ADD CONSTRAINT `fk_productioncompany_company` FOREIGN KEY (`company_id`) REFERENCES `company` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    ADD CONSTRAINT `fk_productioncompany_type` FOREIGN KEY (`type_id`) REFERENCES `type` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- 3. add foreign keys constraints relative to "ISA" architecture
 

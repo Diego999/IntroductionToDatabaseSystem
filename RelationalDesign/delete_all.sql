@@ -2,7 +2,6 @@ SET FOREIGN_KEY_CHECKS=0;
 DROP TABLE `casting`;
 DROP TABLE `character`;
 DROP TABLE `company`;
-DROP TABLE `companytype`;
 DROP TABLE `country`;
 DROP TABLE `episode`;
 DROP TABLE `gender`;
