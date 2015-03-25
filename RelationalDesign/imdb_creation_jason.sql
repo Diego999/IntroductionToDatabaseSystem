@@ -2,8 +2,8 @@
 
 CREATE TABLE `name` (
 	`id` INT UNSIGNED AUTO_INCREMENT,
-    `firstname` VARCHAR(255) NULL,
-    `lastname` VARCHAR(255) NOT NULL,
+    `firstname` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin NULL,
+    `lastname` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
     `person_id` INT UNSIGNED NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE KEY `un_first_last_person` (`firstname`, `lastname`, `person_id`)
@@ -34,7 +34,7 @@ CREATE TABLE `role` (
 
 CREATE TABLE `character` (
 	`id` INT UNSIGNED,
-    `name` VARCHAR(255) NOT NULL,
+    `name` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE KEY `un_name` (`name`)
 );
@@ -61,7 +61,7 @@ CREATE TABLE `casting` (
 
 CREATE TABLE `title` (
 	`id` INT UNSIGNED AUTO_INCREMENT,
-    `title` VARCHAR(255) NOT NULL,
+    `title` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
     `production_id` INT UNSIGNED NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE KEY `un_title_production` (`title`, `production_id`)
@@ -69,14 +69,14 @@ CREATE TABLE `title` (
 
 CREATE TABLE `gender` (
 	`id` INT UNSIGNED AUTO_INCREMENT,
-    `name` VARCHAR(255) NOT NULL,
+    `name` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE KEY `un_name` (`name`)
 );
 
 CREATE TABLE `company` (
 	`id` INT UNSIGNED,
-    `name` VARCHAR(255) NOT NULL,
+    `name` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
     `country_id` INT UNSIGNED NULL,
     PRIMARY KEY (`id`),
     UNIQUE KEY `un_name_country` (`name`, `country_id`)
@@ -84,14 +84,14 @@ CREATE TABLE `company` (
 
 CREATE TABLE `country` (
 	`id` INT UNSIGNED AUTO_INCREMENT,
-    `code` VARCHAR(2) NOT NULL,
+    `code` VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
 	PRIMARY KEY (`id`),
     UNIQUE KEY `un_code` (`code`)
 );
 
 CREATE TABLE `type` (
 	`id` INT UNSIGNED AUTO_INCREMENT,
-    `name` VARCHAR(255) NOT NULL,
+    `name` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE KEY `un_name` (`name`)
 );
@@ -105,7 +105,7 @@ CREATE TABLE `singleproduction` (
 
 CREATE TABLE `kind` (
 	`id` INT UNSIGNED AUTO_INCREMENT,
-    `name` VARCHAR(255) NOT NULL,
+    `name` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE KEY `un_kind_name` (`name`)
 );

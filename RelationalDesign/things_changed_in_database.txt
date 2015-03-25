@@ -1,0 +1,33 @@
+all varchar fields that are indexed are now stored with appropriate collation
+-----------------------------------------------------------------------------
+
+table `name`:
+	`firstname` =>  CHARACTER SET utf8 COLLATE utf8_bin
+	`lastname` =>  CHARACTER SET utf8 COLLATE utf8_bin
+
+table `character`:
+	`name`=>  CHARACTER SET utf8 COLLATE utf8_bin
+
+table `title`:
+	`title` =>  CHARACTER SET utf8 COLLATE utf8_bin
+
+table `gender`:
+	`name` =>  CHARACTER SET utf8 COLLATE utf8_bin
+
+table `company`:
+	`name` =>  CHARACTER SET utf8 COLLATE utf8_bin
+
+table `country`:
+	`code` => CHARACTER SET utf8 COLLATE utf8_bin
+
+table `type`:
+	`name` => CHARACTER SET utf8 COLLATE utf8_bin
+
+table `kind`:
+	`name` => CHARACTER SET utf8 COLLATE utf8_bin
+
+augmented size of country code
+------------------------------
+
+table `country`
+	`code` => VARCHAR(10)
