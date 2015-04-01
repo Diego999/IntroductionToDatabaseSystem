@@ -1,0 +1,12 @@
+# Follow symbolic links on server
+Options +FollowSymLinks
+
+# Turn on URL rewrite engine
+RewriteEngine on
+
+# Disable rewriting for existing files or directories
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Redirect all other requests to webroot's index
+RewriteRule ^.*$ index.php [L]

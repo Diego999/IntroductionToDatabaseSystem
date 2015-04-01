@@ -1,0 +1,38 @@
+#row-header {
+    margin-top: 50px;
+    border-bottom: 5px solid #0066ff;
+}
+
+#row-alerts {
+    padding-top: 20px;
+    background-color: #d1d1d1;
+}
+
+#row-footer {
+    padding-top: 10px;
+    border-top: 5px solid #0066ff;
+}
+
+#img-title {
+    width: 100%;
+    min-width: 250px;
+    max-width: 350px;
+}
+
+#img-footer {
+    width: 120px;
+}
+
+#cell-menu {
+    text-align: right;
+}
+
+#cell-ilaria {
+    color: #0066ff;
+    font-weight: bold;
+    text-align: right;
+}
+
+.submenu-active {
+    background-color: #47a9ff;
+}

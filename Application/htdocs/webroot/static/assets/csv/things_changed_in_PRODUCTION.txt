@@ -1,0 +1,20 @@
+nothing !!
+
+But...
+1st import :
+   - 3180098 treated lines
+   - 3179566 imported lines
+       - 3178793 productions in database (correct both in Workbench and 3179566-793)
+   - 778 warnings
+       - 773 alternative titles for episodes
+       - 5 too long titles
+   - 532 errors
+
+2nd import :
+   - 532 treated lines
+   - 532 imported ines
+       - 3179325 productions in database (correct both in Workbench and 3178793+532)
+   - 0 warning
+   - 0 error
+
+reason : bad order between episodes and series...

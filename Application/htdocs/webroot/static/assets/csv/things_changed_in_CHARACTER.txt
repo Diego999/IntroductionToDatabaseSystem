@@ -1,0 +1,9 @@
+nothing !
+
+but...
+   - 3589274 lines treated
+   - 3589274 lines imported
+   - 709 warnings
+       - 704 duplicate (OK in ref file)
+       - 5 truncated names
+   => 3588570 characters in database (=3589274-704)

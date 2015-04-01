@@ -1,0 +1,23 @@
+nothing but...
+
+first import:
+   - 44046417 treated lines
+   - 44044758 lines imported
+      - 44044758 lines in database
+   - 20189 warnings
+      - 20189 "duplicate entry for character"
+      - 3 parmi les erreurs
+   - 1659 errors
+
+second import :
+   - 1659 treated lines
+   - 1272 lines imported
+      - 44046030 lines in database => correct (44044758 + 1272)
+   - 1289 warnings
+      - 1286 "duplicate entry for production"
+         - 14 parmi les erreurs
+      - 3 "duplicate entry for character"
+         - 2 parmi les erreurs
+   - 387 errors
+      - 387 duplicate entries after character duplicate removals
+	
