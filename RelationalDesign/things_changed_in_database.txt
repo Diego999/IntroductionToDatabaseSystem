@@ -31,3 +31,20 @@ augmented size of country code
 
 table `country`
 	`code` => VARCHAR(10)
+
+changed YEAR fields to handle pre-1900 values
+---------------------------------------------
+
+table `production`
+	`year` => INT UNSIGNED
+
+table `serie`
+	`yearstart` => INT UNSIGNED
+	`yearend` => INT UNSIGNED
+
+changed index in casting
+------------------------
+The same person could act as an actor for multiple roles (characters) in the same production !
+
+table `casting`
+	UNIQUE KEY `un_person_prod_role_character` (`person_id`, `production_id`, `role_id`, `character_id`)

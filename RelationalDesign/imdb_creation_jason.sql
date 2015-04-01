@@ -41,13 +41,15 @@ CREATE TABLE `character` (
 
 CREATE TABLE `production` (
 	`id` INT UNSIGNED,
-    `year` YEAR NULL,
+    `year` INT UNSIGNED NULL,
     `title_id` INT UNSIGNED NOT NULL,
     `gender_id` INT UNSIGNED NULL,
     PRIMARY KEY (`id`),
     UNIQUE KEY `un_main_title` (`title_id`),
     KEY `idx_gender` (`gender_id`)
 );
+
+
 
 CREATE TABLE `casting` (
 	`id` INT UNSIGNED AUTO_INCREMENT,
@@ -56,7 +58,7 @@ CREATE TABLE `casting` (
     `role_id` INT UNSIGNED NOT NULL,
     `character_id` INT UNSIGNED NULL,
     PRIMARY KEY (`id`),
-    UNIQUE KEY `un_person_prod_role` (`person_id`, `production_id`, `role_id`)
+    UNIQUE KEY `un_person_prod_role_character` (`person_id`, `production_id`, `role_id`, `character_id`)
 );
 
 CREATE TABLE `title` (
@@ -120,8 +122,8 @@ CREATE TABLE `season` (
 
 CREATE TABLE `serie` (
 	`id` INT UNSIGNED,
-    `yearstart` YEAR NULL,
-    `yearend` YEAR NULL,
+    `yearstart` INT UNSIGNED NULL,
+    `yearend` INT UNSIGNED NULL,
     PRIMARY KEY (`id`)
 );
 
