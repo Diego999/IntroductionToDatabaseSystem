@@ -53,14 +53,14 @@ FROM
 	WHERE C.role_id = (SELECT R.id FROM `role` R WHERE R.name = "actor")
 	AND C.production_id NOT IN (SELECT S.id
 								FROM `singleproduction` S
-								WHERE S.kind_id IN (SELECT K.id FROM `kind` K WHERE K.name IN ("tv movie","video movie"))
+								WHERE S.kind_id IN (SELECT K.id FROM `kind` K WHERE K.name = "movie")
 								)) C1,
 	(SELECT C.person_id
 	FROM `casting` C
 	WHERE C.role_id = (SELECT R.id FROM `role` R WHERE R.name = "producer")
 	AND C.production_id NOT IN (SELECT S.id
 								FROM `singleproduction` S
-								WHERE S.kind_id IN (SELECT K.id FROM `kind` K WHERE K.name IN ("tv movie","video movie"))
+								WHERE S.kind_id IN (SELECT K.id FROM `kind` K WHERE K.name = "movie")
 								)) C2
 WHERE C1.person_id = C2.person_id;
 
