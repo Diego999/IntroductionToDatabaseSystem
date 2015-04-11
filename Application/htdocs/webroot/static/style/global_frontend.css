@@ -36,3 +36,12 @@
 .submenu-active {
     background-color: #47a9ff;
 }
+
+.row-pad-top-20 {
+    padding-top: 20px;
+}
+
+ul.pagination {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}

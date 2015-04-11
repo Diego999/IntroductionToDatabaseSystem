@@ -25,11 +25,13 @@ class ILARIA_CoreError extends Exception
     const GEN_MODEL_UNLOADABLE = '3ba935253d125e0017fe8f55b162afb497cff011';
     const GEN_TEMPLATE_UNLOADABLE = '91cb73686a77f19a3a58cc36e756462a0b19f86e';
     const GEN_MENU_UNLOADABLE = 'a4212e0692a595e972ed520d1aea9f13f295d10a';
+    const GEN_ASYNC_UNLOADABLE = 'cc18a0c682a5eb5e54dad19bb6cd33c0daae8943';
     const GEN_DB_FAILED_OPEN = 'c84334a4267ecc2c5411ab1388ac6b26f18823fe';
     const GEN_DB_QUERY_FAILED = 'c4509663fb1f87ba701a0f3ba51fb8d1202cbec4';
     const GEN_PARSE_DATE_FAILED = '35b3e7d578be3c71cd267f24f0b57372e0606891';
     const GEN_PARSE_NAME_FAILED = '016578bffdc7fc1ef726157dbdd8d4a2a6e9f204';
     const GEN_PARSE_SIZE_FAILED = 'd8f4a06e462a076245420586905d409fbd785456';
+    const GEN_ASYNC_QUERY_FAILED = '9cc3cede56eb3c1ce12e72f2dac564ab29d32d80';
 
     // #################################################################################################################
     // ##                                              ERRORS MANAGEMENT                                              ##
@@ -110,11 +112,13 @@ class ILARIA_CoreError extends Exception
             case self::GEN_MODEL_UNLOADABLE: return 'gen_view_unloadable';
             case self::GEN_TEMPLATE_UNLOADABLE: return 'gen_template_unloadable';
             case self::GEN_MENU_UNLOADABLE: return 'gen_menu_unloadable';
+            case self::GEN_ASYNC_UNLOADABLE: return 'gen_async_unloadable';
             case self::GEN_DB_FAILED_OPEN: return 'gen_db_failed_open';
             case self::GEN_DB_QUERY_FAILED: return 'gen_db_query_failed';
             case self::GEN_PARSE_DATE_FAILED: return 'gen_parse_date_failed';
             case self::GEN_PARSE_NAME_FAILED: return 'gen_parse_name_failed';
             case self::GEN_PARSE_SIZE_FAILED: return 'gen_parse_size_failed';
+            case self::GEN_ASYNC_QUERY_FAILED: return 'gen_async_query_failed';
             default: return 'unknown';
         }
     }

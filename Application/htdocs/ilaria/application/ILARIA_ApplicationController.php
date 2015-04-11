@@ -63,6 +63,21 @@ abstract class ILARIA_ApplicationController
         }
     }
 
+    protected function getAsynchronous($asyncName)
+    {
+        try
+        {
+            $async = ILARIA_CoreLoader::getInstance()->loadAsynchronous($asyncName);
+            return $async;
+        }
+        catch (ILARIA_CoreError $e)
+        {
+            $e->writeToLog();
+            $e->changeType(ILARIA_CoreError::GEN_ASYNC_UNLOADABLE);
+            throw $e;
+        }
+    }
+
     // #################################################################################################################
     // ##                                              PRIVATE FUNCTIONS                                              ##
     // #################################################################################################################

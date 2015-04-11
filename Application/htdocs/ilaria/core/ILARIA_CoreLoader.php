@@ -201,6 +201,40 @@ class ILARIA_CoreLoader
         return new $name();
     }
 
+    public function loadAsynchronous($name)
+    {
+        // Prepare locations
+        $folder = ILARIA_ConfigurationGlobal::getFsAppAsynchronous();
+        $name = ucfirst(strtolower($name)) . 'Asynchronous';
+
+        // Try to load the corresponding class
+        try
+        {
+            $this->loadClass($name, $folder);
+        }
+
+        // Catch and deal with errors relative to class inclusion
+        catch (ILARIA_CoreError $e)
+        {
+            switch ($e->getType())
+            {
+                case ILARIA_CoreError::GEN_FILE_NOT_FOUND:
+                    throw new ILARIA_CoreError('File for asynchronous ' . $name . ' not found on server',
+                        ILARIA_CoreError::GEN_FILE_NOT_FOUND,
+                        ILARIA_CoreError::LEVEL_SERVER);
+                case ILARIA_CoreError::GEN_CLASS_NOT_FOUND:
+                    throw new ILARIA_CoreError('Class for asynchronous ' . $name . ' not found on server',
+                        ILARIA_CoreError::GEN_CLASS_NOT_FOUND,
+                        ILARIA_CoreError::LEVEL_SERVER);
+                default:
+                    throw $e;
+            }
+        }
+
+        // Instanciate and return
+        return new $name();
+    }
+
     public function includeStyle($file)
     {
         $filename = ILARIA_ConfigurationGlobal::getFsWebStaticStyle() . DS  . $file;

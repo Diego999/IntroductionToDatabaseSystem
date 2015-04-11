@@ -61,6 +61,7 @@ class ILARIA_ConfigurationGlobal
     private static $siteAppTemplate = 'template';
     private static $siteAppView = 'view';
     private static $siteAppMenu = 'menu';
+    private static $siteAppAsynchronous = 'asynchronous';
     private static $siteFra = 'ilaria';
     private static $siteFraApplication = 'application';
     private static $siteFraConfiguration = 'configuration';
@@ -82,7 +83,7 @@ class ILARIA_ConfigurationGlobal
     private static $coreFiles = array('Error', 'Loader', 'Request', 'Dispatcher', 'Module');
     private static $securityFiles = array('Manager', 'Access', 'Encryption');
     private static $databaseFiles = array('Manager', 'Instance', 'Query');
-    private static $applicationFiles = array('Model', 'View', 'Controller', 'Template', 'Menu');
+    private static $applicationFiles = array('Model', 'View', 'Controller', 'Template', 'Menu', 'Asynchronous');
     private static $moduleFiles = array('Mysql', 'NoAuth');
 
     // default controller and action to execute
@@ -238,6 +239,11 @@ class ILARIA_ConfigurationGlobal
     public static function getFsAppMenu()
     {
         return self::getFsApp() . self::simplifyPath(DS . self::$siteAppMenu);
+    }
+
+    public static function getFsAppAsynchronous()
+    {
+        return self::getFsApp() . self::simplifyPath(DS . self::$siteAppAsynchronous);
     }
 
     public static function getFsWebStaticAssets()
