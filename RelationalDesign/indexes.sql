@@ -1,0 +1,1 @@
+CREATE INDEX `hash_productioncompany_type` USING HASH ON `productioncompany` (`type_id`);

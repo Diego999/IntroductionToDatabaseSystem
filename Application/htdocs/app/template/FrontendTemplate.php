@@ -19,6 +19,7 @@ class FrontendTemplate extends ILARIA_ApplicationTemplate
         <?php echo ILARIA_CoreLoader::getInstance()->includeScript('bootstrap.js'); ?>
     </head>
     <body>
+        <?php echo ILARIA_ApplicationAsynchronous::buildModalStructure(); ?>
         <div class="container-fluid">
             <div class="row" id="row-header">
                 <div class="col-md-1"></div>

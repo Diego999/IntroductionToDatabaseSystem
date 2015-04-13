@@ -8,6 +8,19 @@ abstract class ILARIA_ApplicationAsynchronous
 
     const PAGINATION_SIZE = 20;
 
+    const MODAL_TITLE = '777ded5911632c4d54f98899f34b81bcaff1ce8c';
+    const MODAL_CONTENT = '02cad44d0118827d6ecef22103bde1389543bf41';
+    const MODAL_BUTTONS = '34fe3361c6e59470dec59554d09ad81747f44438';
+    const MODAL_LINK = '84381582366b1334fb80159a5599b517b6ffc681';
+    const MODAL_BUTTON_STYLE = 'b8a0a0df644c06a8cda0a242dc9033e517e1adde';
+    const MODAL_BUTTON_ACTION = '74b2935c93c80d5f1eb901823870cb2b07582ce1';
+    const MODAL_BUTTON_TITLE = '4f8c0399dda57b7b8d072a547ec051cd52d4238c';
+    const MODAL_BUTTON_LINK = 'a1b26b8fdc78171da71ed738bd391d82ec298e1b';
+    const MODAL_ACTION_SUBMIT = '52d3bb8d34a13b50ff858ee2489351d74fd03824';
+    const MODAL_ACTION_RESET = 'a62f6695b78c8d5b1658ee6a7a04c6430845297b';
+    const MODAL_ACTION_DISMISS = '19259c73fe89e01119a6592c5505e3f8afa132d5';
+    const MODAL_ACTION_LINK = '32e301c16c04135b7673e164fe3140c419732773';
+
     // #################################################################################################################
     // ##                                              PUBLIC FUNCTIONS                                               ##
     // #################################################################################################################
@@ -61,6 +74,82 @@ abstract class ILARIA_ApplicationAsynchronous
             $view->setTemplateName('ajax');
             return $view;
         }
+    }
+
+    public static function buildModalStructure()
+    {
+        // Build HTML visual structure
+        $result = self::buildModalHtml();
+
+        // Build javascript content
+        $result .= self::buildModalScript();
+
+        return $result;
+    }
+
+    public static function getModalOnClickShow($url, $doublequote=false)
+    {
+        $quote = ($doublequote ? "\\\"" : "\"");
+        return "onclick=" . $quote . "modal_load_url('" . $url . "')" . $quote;
+    }
+
+    public static function buildModalAjaxResponse($content)
+    {
+        // object begin
+        $ajaxString = '{';
+
+        // modal title
+        $ajaxString .= "\"title\":\"" . ILARIA_SecurityManager::out($content[self::MODAL_TITLE]) . "\",";
+
+        // modal content
+        $ajaxString .= "\"content\":\"" . $content[self::MODAL_CONTENT] . "\",";
+
+        // modal link
+        if (isset($content[self::MODAL_LINK]))
+        {
+            $ajaxString .= "\"formlink\":\"" . ILARIA_SecurityManager::out($content[self::MODAL_LINK]) . "\",";
+        }
+
+        // modal buttons
+        $ajaxString .= "\"buttons\":[";
+        $count = 0;
+        foreach ($content[self::MODAL_BUTTONS] as $button)
+        {
+            if ($count > 0)
+            {
+                $ajaxString .= ",";
+            }
+            switch ($button[self::MODAL_BUTTON_ACTION])
+            {
+                case self::MODAL_ACTION_DISMISS:
+                    $buttonString = "<button type=\\\"button\\\" class=\\\"btn btn-" . $button[self::MODAL_BUTTON_STYLE] . "\\\" data-dismiss=\\\"modal\\\">" . $button[self::MODAL_BUTTON_TITLE] . "</button>";
+                    break;
+                case self::MODAL_ACTION_RESET:
+                    $buttonString = "<input type=\\\"reset\\\" class=\\\"btn btn-" . $button[self::MODAL_BUTTON_STYLE] . "\\\" name=\\\"reset\\\" value=\\\"" . $button[self::MODAL_BUTTON_TITLE] . "\\\" />";
+                    break;
+                case self::MODAL_ACTION_SUBMIT:
+                    $buttonString = "<input type=\\\"submit\\\" class=\\\"btn btn-" . $button[self::MODAL_BUTTON_STYLE] . "\\\" name=\\\"submit\\\" value=\\\"" . $button[self::MODAL_BUTTON_TITLE] . "\\\" />";
+                    break;
+                case self::MODAL_ACTION_LINK:
+                    $buttonString = "<a class=\\\"btn btn-" . $button[self::MODAL_BUTTON_STYLE] . "\\\" href=\\\"" . $button[self::MODAL_BUTTON_LINK] . "\\\" role=\\\"button\\\">" . $button[self::MODAL_BUTTON_TITLE] . "</a>";
+                    break;
+                default:
+                    $buttonString = '';
+                    break;
+            }
+            $ajaxString .= "\"" . $buttonString . "\"";
+            $count++;
+        }
+        $ajaxString .= "]";
+
+        // object end
+        $ajaxString .= '}';
+
+        // Return the JSON tab in its own view
+        $view = new ILARIA_ApplicationAsynchronousView();
+        $view->prepare($ajaxString);
+        $view->setTemplateName('ajax');
+        return $view;
     }
 
     // #################################################################################################################
@@ -223,7 +312,7 @@ abstract class ILARIA_ApplicationAsynchronous
         // Create paginator numeric buttons
         $output[] = "for (var i=1; i <= pagecount; i++) {";
         $output[] = "var btnCurrent = (i == number ? btnActive : btnBasic);";
-        $output[] = "$(\"#" . $this->getPaginatorNextButton() . "\").before(btnCurrent.replace(\":num\", i).replace(\":page\", i));";
+        $output[] = "$(\"#" . $this->getPaginatorNextButton() . "\").before(btnCurrent.replace(/:num/g, i).replace(/:page/g, i));";
         $output[] = "}";
 
         // Write the new page into the corresponding div
@@ -238,7 +327,7 @@ abstract class ILARIA_ApplicationAsynchronous
         // Build the corresponding display row
         $output[] = "var elemcontent = elemstruct;";
         $output[] = "$.each(async_" . $this->getUniqueIdentifier() . "_data[i], function(idx,val) {";
-        $output[] = "elemcontent = elemcontent.replace(\":\" + idx,val);";
+        $output[] = "elemcontent = elemcontent.replace(new RegExp(\":\" + idx, 'g'),val);";
         $output[] = "});";
 
         // Add the display row to the main container
@@ -296,7 +385,7 @@ abstract class ILARIA_ApplicationAsynchronous
         $output[] = "var errorstruct = \"" . $this->getDisplayError() . "\";";
 
         // Build the corresponding display row
-        $output[] = "var errorcontent = errorstruct.replace(\":error\", data.responseText);";
+        $output[] = "var errorcontent = errorstruct.replace(/:error/g, data.responseText);";
 
         // Add the display row to the main container
         $output[] = "container.append(errorcontent);";
@@ -321,6 +410,142 @@ abstract class ILARIA_ApplicationAsynchronous
         $output = array();
         $output[] = "<div style=\"display:none\" id=\"async_" . $this->getUniqueIdentifier() . "_current_page\">0</div>";
         return implode("\n", $output);
+    }
+
+    private static function buildModalHtml()
+    {
+        $html = '';
+        $html .= "<div class=\"modal fade\" id=\"modal\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"modallabel\" aria-hidden=\"true\">\n";
+        $html .= "<div class=\"modal-dialog\">\n";
+        $html .= "<div class=\"modal-content\" id=\"modal-container\">\n";
+        $html .= "</div>\n";
+        $html .= "</div>\n";
+        $html .= "</div>\n";
+        return $html;
+    }
+
+    private static function buildModalScript()
+    {
+        // Begin script
+        $script = "<script type=\"text/javascript\">\n";
+
+        // Structure for the modal header
+        $script .= "var modal_struct_header = \"";
+        $script .= "<div class=\\\"modal-header\\\">";
+        $script .= "<button type=\\\"button\\\" class=\\\"close\\\" data-dismiss=\\\"modal\\\" aria-label=\\\"Close\\\">";
+        $script .= "<span aria-hidden=\\\"true\\\">&times;</span>";
+        $script .= "</button>";
+        $script .= "<h4 class=\\\"modal-title\\\">:title</h4>";
+        $script .= "</div>";
+        $script .= "\";\n";
+
+        // Structure for modal body
+        $script .= "var modal_struct_body = \"";
+        $script .= "<div class=\\\"modal-body\\\">";
+        $script .= ":content";
+        $script .= "</div>";
+        $script .= "\";\n";
+
+        // Structure for modal footer
+        $script .= "var modal_struct_footer =\"";
+        $script .= "<div class=\\\"modal-footer\\\">";
+        $script .= ":content";
+        $script .= "</div>";
+        $script .= "\";\n";
+
+        // Structure for form opening
+        $script .= "var modal_struct_form_open = \"";
+        $script .= "<form method=\\\"post\\\" action=\\\":action\\\" enctype=\\\"multipart/form-data\\\">";
+        $script .= "\";\n";
+
+        // Structure for form closing
+        $script .= "var modal_struct_form_close = \"";
+        $script .= "</form>";
+        $script .= "\";\n";
+
+        // Function for building a header block
+        $script .= "function modal_build_header(title) {\n";
+        $script .= "return modal_struct_header.replace(/:title/g, title);\n";
+        $script .= "}\n";
+
+        // Function for building a body block
+        $script .= "function modal_build_body(content) {\n";
+        $script .= "return modal_struct_body.replace(/:content/g, content);\n";
+        $script .= "}\n";
+
+        // Function for building a footer block
+        $script .= "function modal_build_footer(content) {\n";
+        $script .= "return modal_struct_footer.replace(/:content/g, content);\n";
+        $script .= "}\n";
+
+        // Function for building a form opening
+        $script .= "function modal_build_form_open(action) {\n";
+        $script .= "return modal_struct_form_open.replace(/:action/g, action);\n";
+        $script .= "}\n";
+
+        // Function for loading url into the modal window
+        $script .= "function modal_load_url(url) {\n";
+
+        // Clear the modal window and put loading logo
+        $script .= "$(\"#modal-container\").empty();\n";
+        $script .= "var loadingContent = \"\";\n";
+        $script .= "loadingContent += modal_build_header(\"loading...\");\n";
+        $script .= "loadingContent += modal_build_body(\"<img src=\\\"" . ILARIA_CoreLoader::getInstance()->includeAsset("ajax/ajax_loading.gif") . "\\\" alt=\\\"loading...\\\" />\");\n";
+        $script .= "loadingContent += modal_build_footer(\"\");\n";
+        $script .= "$(\"#modal-container\").html(loadingContent);\n";
+
+        // Show the modal window
+        $script .= "$(\"#modal\").modal('show');\n";
+
+        // Call the AJAX loading
+        $script .= "$.getJSON(url, function(data) {\n";
+
+        // Create the new content
+        $script .= "var newContent = \"\";\n";
+
+        // Add form if needed
+        $script .= "if ('formlink' in data) {\n";
+        $script .= "newContent += modal_build_form_open(data.formlink);\n";
+        $script .= "}\n";
+
+        // Prepare the header with title
+        $script .= "newContent += modal_build_header(data.title);\n";
+
+        // Prepare the content
+        $script .= "newContent += modal_build_body(data.content);\n";
+
+        // Prepare the footer
+        $script .= "var footerContent = \"\";\n";
+        $script .= "$.each(data.buttons, function(idx,val) {\n";
+        $script .= "footerContent += val;\n";
+        $script .= "});\n";
+        $script .= "newContent += modal_build_footer(footerContent);\n";
+
+        // Close form if needed
+        $script .= "if ('formlink' in data) {\n";
+        $script .= "newContent += modal_struct_form_close;\n";
+        $script .= "}\n";
+
+        // Clear the modal window
+        $script .= "$(\"#modal-container\").empty();\n";
+
+        // Fill the modal window
+        $script .= "$(\"#modal-container\").html(newContent);\n";
+
+        // Show the modal window
+        $script .= "$(\"#modal\").modal('show');\n";
+
+        // Ajax loading error
+        $script .= "});\n";
+
+        // End of function modal_load_url(url)
+        $script .= "}\n";
+
+        // End script
+        $script .= "</script>\n";
+
+        // Return script
+        return $script;
     }
 
 }

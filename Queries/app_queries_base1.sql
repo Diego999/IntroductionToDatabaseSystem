@@ -8,3 +8,21 @@ WHERE
 GROUP BY CH.`id`
 ORDER BY CH.`id`;
 
+-- gather all persons who played a given character (here 2604958 = Katniss Everdeen)
+SELECT DISTINCT PE.`id`, NA.`firstname`, NA.`lastname`
+FROM
+	`person` PE
+    INNER JOIN `name` NA ON PE.`name_id` = NA.`id`
+    INNER JOIN `casting` CA ON PE.`id` = CA.`person_id`
+WHERE
+	CA.`character_id` = 2604958;
+    
+-- gather the name of character based on its ID (here 2604958 = Katniss Everdeen)
+SELECT DISTINCT CH.`name`
+FROM
+	`character` CH
+WHERE
+	CH.`id` = 2604958;
+    
+-- gather all movies in which a given character appears (here 2604958 = Katniss Everdeen)
+SELECT DISTINCT PR.`id`, TI.`title`, PR.`year`

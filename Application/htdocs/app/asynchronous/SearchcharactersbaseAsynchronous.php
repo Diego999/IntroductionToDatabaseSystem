@@ -24,8 +24,8 @@ class SearchcharactersbaseAsynchronous extends ILARIA_ApplicationAsynchronous
     {
         return "<tr class=\\\"" . $this->getElementClass() . "\\\">"
             . "<td>:name</td>"
-            . "<td>:persons_count</td>"
-            . "<td>:productions_count</td>"
+            . "<td><a class=\\\"btn btn-default\\\" href=\\\"#\\\" role=\\\"button\\\" " . ILARIA_ApplicationAsynchronous::getModalOnClickShow(ILARIA_ConfigurationGlobal::buildRequestChain('search', 'characteractors', array('id' => ':id')), true) . "><span class=\\\"glyphicon glyphicon-align-justify\\\" aria-hidden=\\\"true\\\"></span> :persons_count</a></td>"
+            . "<td><a class=\\\"btn btn-default\\\" href=\\\"#\\\" role=\\\"button\\\" " . ILARIA_ApplicationAsynchronous::getModalOnClickShow(ILARIA_ConfigurationGlobal::buildRequestChain('search', 'charactermovies', array('id' => ':id')), true) . "><span class=\\\"glyphicon glyphicon-align-justify\\\" aria-hidden=\\\"true\\\"></span> :productions_count</a></td>"
             . "</tr>";
     }
 
