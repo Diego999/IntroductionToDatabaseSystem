@@ -286,6 +286,7 @@ abstract class ILARIA_ApplicationAsynchronous
 
         // compute first idx
         $output[] = "var idx_start = (number-1) * " . self::PAGINATION_SIZE . ";";
+        $output[] = "if (async_" . $this->getUniqueIdentifier() . "_data.length == 0) { idx_start=-1; }";
 
         // compute last idx
         $output[] = "var idx_end = idx_start + " . self::PAGINATION_SIZE . " - 1;";

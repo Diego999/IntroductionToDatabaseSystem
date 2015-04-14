@@ -46,10 +46,10 @@ class SearchcharactersbaseAsynchronous extends ILARIA_ApplicationAsynchronous
             . "<td><nav style=\"visibility:hidden\" id=\"" . $this->getPaginatorId() . "\">"
             . "<ul class=\"pagination\">"
             . "<li id=\"" . $this->getPaginatorPreviousButton() . "\" " . $this->getPaginatorOnClickPrevious() . ">"
-            . "<a href=\"#\" aria-label=\"Previous\"><span aria-hidden=\"true\">&laquo;</span></a>"
+            . "<a style=\"cursor:pointer\" aria-label=\"Previous\"><span aria-hidden=\"true\">&laquo;</span></a>"
             . "</li>"
             . "<li id=\"" . $this->getPaginatorNextButton() . "\" " . $this->getPaginatorOnClickNext() . ">"
-            . "<a href=\"#\" aria-label=\"Next\"><span aria-hidden=\"true\">&raquo;</span></a>"
+            . "<a style=\"cursor:pointer\" aria-label=\"Next\"><span aria-hidden=\"true\">&raquo;</span></a>"
             . "</li>"
             . "</ul>"
             . "</nav></td></tr></table></div>";
@@ -57,12 +57,12 @@ class SearchcharactersbaseAsynchronous extends ILARIA_ApplicationAsynchronous
 
     protected function getDisplayPaginatorButton()
     {
-        return "<li class=\\\"" . $this->getPaginatorButtonClass() . "\\\"><a href=\\\"#\\\" " . $this->getPaginatorOnClickNumeric() . ">:num</a></li>";
+        return "<li class=\\\"" . $this->getPaginatorButtonClass() . "\\\"><a style=\\\"cursor:pointer\\\" " . $this->getPaginatorOnClickNumeric() . ">:num</a></li>";
     }
 
     protected function getDisplayPaginatorButtonActive()
     {
-        return "<li class=\\\"" . $this->getPaginatorButtonClass() . " active\\\"><a href=\\\"#\\\" " . $this->getPaginatorOnClickNumeric() . ">:num <span class=\\\"sr-only\\\">(current)</span></a></li>";
+        return "<li class=\\\"" . $this->getPaginatorButtonClass() . " active\\\"><a " . $this->getPaginatorOnClickNumeric() . ">:num <span class=\\\"sr-only\\\">(current)</span></a></li>";
     }
 
     protected function getRawContent($params)

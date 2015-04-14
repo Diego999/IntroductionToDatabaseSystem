@@ -26,3 +26,9 @@ WHERE
     
 -- gather all movies in which a given character appears (here 2604958 = Katniss Everdeen)
 SELECT DISTINCT PR.`id`, TI.`title`, PR.`year`
+FROM
+	`production` PR
+    INNER JOIN `title` TI ON PR.`title_id` = TI.`id`
+    INNER JOIN `casting` CA ON PR.`id` = CA.`production_id`
+WHERE
+	CA.`character_id` = 2604958;
