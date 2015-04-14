@@ -43,7 +43,7 @@ WHERE
 		INNER JOIN `role` RO ON CA.`role_id` = RO.`id`
 	WHERE
 		CA.`person_id` = 1831321
-	GROUP BY PR.`id`
+	GROUP BY PR.`id`, RO.`name`, CH.`name`
 )
 UNION DISTINCT
 (
@@ -61,5 +61,5 @@ UNION DISTINCT
 		INNER JOIN `role` RO ON CA.`role_id` = RO.`id`
 	WHERE
 		CA.`person_id` = 1831321
-	GROUP BY PR_SER.`id`
+	GROUP BY PR_SER.`id`, RO.`name`, CH.`name`
 );

@@ -114,7 +114,7 @@ class PersonModel extends ILARIA_ApplicationModel
                 . " LEFT JOIN `character` CH ON CA.`character_id` = CH.`id`"
                 . " INNER JOIN `role` RO ON CA.`role_id` = RO.`id`"
                 . " WHERE CA.`person_id`=" . $personId
-                . " GROUP BY PR.`id`"
+                . " GROUP BY PR.`id`, RO.`name`, CH.`name`"
                 . " ) UNION DISTINCT ("
                 . " SELECT SER.`id` AS `prod_id`, TI.`title` AS `prod_title`, COUNT(DISTINCT EP.`id`) AS `episode_count`, COUNT(DISTINCT SEA.`id`) AS `season_count`, SER.`yearstart` AS `prod_yearstart`, SER.`yearend` AS `prod_yearend`, GE.`name` AS `prod_gender`, CH.`name` AS `char_name`, RO.`name` AS `role_name`"
                 . " FROM `casting` CA"
@@ -128,7 +128,7 @@ class PersonModel extends ILARIA_ApplicationModel
                 . " LEFT JOIN `character` CH ON CA.`character_id` = CH.`id`"
                 . " INNER JOIN `role` RO ON CA.`role_id` = RO.`id`"
                 . " WHERE CA.`person_id`=" . $personId
-                . " GROUP BY PR_SER.`id`"
+                . " GROUP BY PR_SER.`id`, RO.`name`, CH.`name`"
                 . ")";
             $query = new ILARIA_DatabaseQuery($sql);
             $this->getDatabase()->query($query);
