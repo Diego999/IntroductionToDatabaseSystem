@@ -61,6 +61,16 @@ WHERE
 GROUP BY SEA.`id`
 ORDER BY SEA.`number`;
 
+-- gather information of serie/season with particular season ID (here 920 = season 1 of 24)
+SELECT SEA.`number` AS `season_number`, TI.`title` AS `serie_title`
+FROM
+	`season` SEA
+    INNER JOIN `serie` SER ON SEA.`serie_id` = SER.`id`
+    INNER JOIN `production` PR ON SER.`id` = PR.`id`
+    INNER JOIN `title` TI ON PR.`title_id` = TI.`id`
+WHERE
+	SEA.`id`=920;
+
 -- gather list of episodes of a season with particular ID (here 920 = season 1 of 24)
 SELECT EP.`id` AS `episode_id`, TI.`title` AS `episode_title`, EP.`number` AS `episode_number`
 FROM

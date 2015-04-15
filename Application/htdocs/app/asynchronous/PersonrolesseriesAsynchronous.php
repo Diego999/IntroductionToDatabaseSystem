@@ -78,6 +78,11 @@ class PersonrolesseriesAsynchronous extends ILARIA_ApplicationAsynchronous
                 ILARIA_CoreError::GEN_ASYNC_QUERY_FAILED,
                 ILARIA_CoreError::LEVEL_ADMIN);
         }
+        for ($i=0; $i<count($content); $i++)
+        {
+            $content[$i]['prod_yearstart'] = ($content[$i]['prod_yearstart'] ? $content[$i]['prod_yearstart'] : "?");
+            $content[$i]['prod_yearend'] = ($content[$i]['prod_yearend'] ? $content[$i]['prod_yearend'] : "?");
+        }
         return $content;
     }
 }

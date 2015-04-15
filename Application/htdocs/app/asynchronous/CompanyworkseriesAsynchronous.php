@@ -1,30 +1,32 @@
 <?php
 
-class ProductioncompaniesAsynchronous extends ILARIA_ApplicationAsynchronous
+class CompanyworkseriesAsynchronous extends ILARIA_ApplicationAsynchronous
 {
     protected function getUniqueIdentifier()
     {
-        return "productioncompanies";
+        return "companyworkseries";
     }
 
     protected function getWebPath($params)
     {
-        return ILARIA_ConfigurationGlobal::buildRequestChain("production", "asynccompanies", $params);
+        return ILARIA_ConfigurationGlobal::buildRequestChain("company", "asyncworkseries", $params);
     }
 
     protected function getDisplayStructure()
     {
         return "<table class=\"table\" id=\"" . $this->getContainerId() . "\">"
-            . "<tr><th>Name</th><th>Country</th><th>Type</th></tr>"
-            . "<tr id=\"" . $this->getLoadingId() . "\"><td colspan=\"3\" style=\"text-align:center\">" . $this->getLoadingGif() . "</td></tr>"
+            . "<tr><th>Title</th><th>Years</th><th>Genre</th><th>Appearances</th><th>Acted as</th></tr>"
+            . "<tr id=\"" . $this->getLoadingId() . "\"><td colspan=\"5\" style=\"text-align:center\">" . $this->getLoadingGif() . "</td></tr>"
             . "</table>";
     }
 
     protected function getDisplayRow()
     {
         return "<tr class=\\\"" . $this->getElementClass() . "\\\">"
-            . "<td><a class=\\\"btn btn-primary btn-xs\\\" href=\\\"" . ILARIA_ConfigurationGlobal::buildRequestChain("company", "details", array('id' => ':id')) . "\\\" role=\\\"button\\\"><span class=\\\"glyphicon glyphicon-arrow-right\\\" aria-hidden=\\\"true\\\"></span></a> :name</td>"
-            . "<td>:country</td>"
+            . "<td><a class=\\\"btn btn-primary btn-xs\\\" href=\\\"" . ILARIA_ConfigurationGlobal::buildRequestChain("production", "details", array('id' => ':id')) . "\\\" role=\\\"button\\\"><span class=\\\"glyphicon glyphicon-arrow-right\\\" aria-hidden=\\\"true\\\"></span></a> :title</td>"
+            . "<td>:yearstart-:yearend</td>"
+            . "<td>:gender</td>"
+            . "<td>:episode_count episodes in :season_count seasons</td>"
             . "<td>:type</td>"
             . "</tr>";
     }
@@ -32,14 +34,14 @@ class ProductioncompaniesAsynchronous extends ILARIA_ApplicationAsynchronous
     protected function getDisplayError()
     {
         return "<tr>"
-        . "<td colspan=\\\"2\\\" style=\\\"text-align:center; font-weight: bold; font-color: #0066ff\\\">:error</td>"
+        . "<td colspan=\\\"5\\\" style=\\\"text-align:center; font-weight: bold; font-color: #0066ff\\\">:error</td>"
         . "</tr>";
     }
 
     protected function getDisplayPaginator()
     {
         return "<div>"
-        . "<h3 class=\"panel-title\">Companies involved</h3></div>"
+        . "<h3 class=\"panel-title\">Acted in series</h3></div>"
         . "<div style=\"float: right; margin-top:-25px;\">"
         . "<table><tr>"
         . "<td><a id=\"" . $this->getPaginatorText() . "\" style=\"margin-right:20px\">Loading...</a></td>"
@@ -67,13 +69,18 @@ class ProductioncompaniesAsynchronous extends ILARIA_ApplicationAsynchronous
 
     protected function getRawContent($params)
     {
-        $model = $this->getModel("production");
-        $content = $model->getProductionCompanies($params['prod_id']);
+        $model = $this->getModel("company");
+        $content = $model->getCompanyInfosWorkSeries($params['company_id']);
         if (!is_array($content))
         {
-            throw new ILARIA_CoreError("An error occurred while searching through the companies",
+            throw new ILARIA_CoreError("An error occurred while searching through the series",
                 ILARIA_CoreError::GEN_ASYNC_QUERY_FAILED,
                 ILARIA_CoreError::LEVEL_ADMIN);
+        }
+        for ($i=0; $i<count($content); $i++)
+        {
+            $content[$i]['yearstart'] = ($content[$i]['yearstart'] ? $content[$i]['yearstart'] : "?");
+            $content[$i]['yearend'] = ($content[$i]['yearend'] ? $content[$i]['yearend'] : "?");
         }
         return $content;
     }
