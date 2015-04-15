@@ -27,7 +27,7 @@ CREATE TABLE `person` (
 
 CREATE TABLE `role` (
 	`id` INT UNSIGNED AUTO_INCREMENT,
-    `name` VARCHAR(255) NOT NULL,
+    `name` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE KEY `un_name` (`name`)
 );

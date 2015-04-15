@@ -5,6 +5,9 @@ table `name`:
 	`firstname` =>  CHARACTER SET utf8 COLLATE utf8_bin
 	`lastname` =>  CHARACTER SET utf8 COLLATE utf8_bin
 
+table `role`:
+	`name`=> CHARACTER SET utf8 COLLATE utf8_bin
+
 table `character`:
 	`name`=>  CHARACTER SET utf8 COLLATE utf8_bin
 
