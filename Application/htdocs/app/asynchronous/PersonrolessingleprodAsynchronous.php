@@ -25,7 +25,7 @@ class PersonrolessingleprodAsynchronous extends ILARIA_ApplicationAsynchronous
         return "<tr class=\\\"" . $this->getElementClass() . "\\\">"
             . "<td>:role_name</td>"
             . "<td>:char_name</td>"
-            . "<td>:prod_title</td>"
+            . "<td><a class=\\\"btn btn-primary btn-xs\\\" href=\\\"" . ILARIA_ConfigurationGlobal::buildRequestChain("production", "details", array('id' => ':prod_id')) . "\\\" role=\\\"button\\\"><span class=\\\"glyphicon glyphicon-arrow-right\\\" aria-hidden=\\\"true\\\"></span></a> :prod_title</td>"
             . "<td>:prod_year</td>"
             . "<td>:prod_gender</td>"
             . "<td>:prod_kind</td>"

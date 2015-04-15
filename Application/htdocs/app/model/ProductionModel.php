@@ -195,6 +195,36 @@ class ProductionModel extends ILARIA_ApplicationModel
         }
     }
 
+    public function getSeasonInfos($seasonId)
+    {
+        try
+        {
+            $sql = "SELECT SEA.`number` AS `season_number`, TI.`title` AS `serie_title`"
+                . " FROM `season` SEA"
+                . " INNER JOIN `serie` SER ON SEA.`serie_id` = SER.`id`"
+                . " INNER JOIN `production` PR ON SER.`id` = PR.`id`"
+                . " INNER JOIN `title` TI ON PR.`title_id` = TI.`id`"
+                . " WHERE SEA.`id`=" . $seasonId;
+            $query = new ILARIA_DatabaseQuery($sql);
+            $this->getDatabase()->query($query);
+            if ($query->getStatus() == 0 && $query->getCount() == 1)
+            {
+                return $query->getData()[0];
+            }
+            else
+            {
+                throw new ILARIA_CoreError("Error in ProductionModel::getSeasonInfos : request returned status " . $query->getStatus(),
+                    ILARIA_CoreError::GEN_DB_QUERY_FAILED,
+                    ILARIA_CoreError::LEVEL_ADMIN);
+            }
+        }
+        catch (ILARIA_CoreError $e)
+        {
+            $e->writeToLog();
+            return -1;
+        }
+    }
+
     public function getEpisodesList($seasonId)
     {
         try

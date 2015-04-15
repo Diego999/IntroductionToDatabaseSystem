@@ -8,7 +8,7 @@ class ProductiondetailsView extends ILARIA_ApplicationView
         switch ($data['cardinality'])
         {
             case ProductionModel::CARD_SINGLE:
-                $keyTitle = 'prod_id';
+                $keyTitle = 'prod_title';
                 $keyGender = 'prod_gender';
                 $year = $data['infos']['prod_year'];
                 break;

@@ -23,7 +23,7 @@ class ProductioncastingAsynchronous extends ILARIA_ApplicationAsynchronous
     protected function getDisplayRow()
     {
         return "<tr class=\\\"" . $this->getElementClass() . "\\\">"
-            . "<td>:person_firstname :person_lastname</td>"
+            . "<td><a class=\\\"btn btn-primary btn-xs\\\" href=\\\"" . ILARIA_ConfigurationGlobal::buildRequestChain("person", "details", array('id' => ':person_id')) . "\\\" role=\\\"button\\\"><span class=\\\"glyphicon glyphicon-arrow-right\\\" aria-hidden=\\\"true\\\"></span></a> :person_firstname :person_lastname</td>"
             . "<td>:role_name</td>"
             . "<td>:char_name</td>"
             . "</tr>";
