@@ -310,8 +310,12 @@ abstract class ILARIA_ApplicationAsynchronous
         $output[] = "$(\"#" . $this->getPaginatorNextButton() . "\").removeClass(\"disabled\");";
         $output[] = "}";
 
+        // Determine buttons limits (max -5/+5)
+        $output[] = "var button_min = (1 >= number-5 ? 1 : number-5);";
+        $output[] = "var button_max = (pagecount >= number+5 ? number+5 : pagecount);";
+
         // Create paginator numeric buttons
-        $output[] = "for (var i=1; i <= pagecount; i++) {";
+        $output[] = "for (var i=button_min; i <= button_max; i++) {";
         $output[] = "var btnCurrent = (i == number ? btnActive : btnBasic);";
         $output[] = "$(\"#" . $this->getPaginatorNextButton() . "\").before(btnCurrent.replace(/:num/g, i).replace(/:page/g, i));";
         $output[] = "}";

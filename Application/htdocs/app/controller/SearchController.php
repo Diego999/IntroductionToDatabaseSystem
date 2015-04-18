@@ -10,12 +10,29 @@ class SearchController extends ILARIA_ApplicationController
                 return true;
             case 'result':
                 return true;
+
+            // Search for characters
             case 'charactersbase':
                 return true;
             case 'characteractors':
                 return true;
             case 'charactermovies':
                 return true;
+
+            // Search for companies
+            case 'companiesbase':
+                return true;
+            case 'companyproduced':
+                return true;
+            case 'companydistributed':
+                return true;
+
+            // Search for genders
+            case 'gendersbase':
+                return true;
+            case 'gendermovies':
+                return true;
+
             default:
                 return false;
         }
@@ -56,11 +73,15 @@ class SearchController extends ILARIA_ApplicationController
 
         // Load asynchronous module
         $asyncCharacters = $this->getAsynchronous("searchcharactersbase");
+        $asyncCompanies = $this->getAsynchronous("searchcompaniesbase");
+        $asyncGenders = $this->getAsynchronous("searchgendersbase");
 
         // Output to view
         $view->prepare(array(
             'search' => $request->getPostArg('input-value'),
-            'charactersbase' => $asyncCharacters
+            'charactersbase' => $asyncCharacters,
+            'companiesbase' => $asyncCompanies,
+            'gendersbase' => $asyncGenders,
         ));
 
         // Return view
@@ -145,6 +166,152 @@ class SearchController extends ILARIA_ApplicationController
 
         // Create title
         $title = "Movies in which " . $model->getCharacterName($request->getGetArg('id')) . " appears";
+
+        return ILARIA_ApplicationAsynchronous::buildModalAjaxResponse(array(
+            ILARIA_ApplicationAsynchronous::MODAL_TITLE => $title,
+            ILARIA_ApplicationAsynchronous::MODAL_CONTENT => $view,
+            ILARIA_ApplicationAsynchronous::MODAL_BUTTONS => array(
+                array(
+                    ILARIA_ApplicationAsynchronous::MODAL_BUTTON_STYLE => "default",
+                    ILARIA_ApplicationAsynchronous::MODAL_BUTTON_TITLE => "Close",
+                    ILARIA_ApplicationAsynchronous::MODAL_BUTTON_ACTION => ILARIA_ApplicationAsynchronous::MODAL_ACTION_DISMISS,
+                ),
+            ),
+        ));
+    }
+
+    public function action_companiesbase($request)
+    {
+        $params = array();
+        if ($request->existGetArg('name'))
+        {
+            $params['name'] = $request->getGetArg('name');
+        }
+        return $this->getAsynchronous("searchcompaniesbase")->getContent($params);
+    }
+
+    public function action_companyproduced($request)
+    {
+        // Get model
+        $model = $this->getModel("search");
+
+        // Gather list of movies
+        $movies = $model->getMoviesProducedByCompany($request->getGetArg('id'));
+
+        // Deal with error
+        if (!is_array($movies))
+        {
+            throw new ILARIA_CoreError("An error occurred while searching through the movies",
+                ILARIA_CoreError::GEN_ASYNC_QUERY_FAILED,
+                ILARIA_CoreError::LEVEL_ADMIN);
+        }
+
+        // Create view
+        $view = "<table class=\\\"table table-striped table-condensed\\\">";
+        $view .= "<tr><th>Title</th><th>Year</th><th></th></tr>";
+        foreach ($movies as $movie)
+        {
+            $view .= "<tr><td>" . $movie['title'] . "</td><td>" . ($movie['year'] ? $movie['year'] : '?') . "</td><td><a class=\\\"btn btn-default\\\" href=\\\"" . ILARIA_ConfigurationGlobal::buildRequestChain("production","details",array("id" => $movie['id'])) . "\\\" role=\\\"button\\\"><span class=\\\"glyphicon glyphicon-arrow-right\\\" aria-hidden=\\\"true\\\"></span> see details</a></td></tr>";
+        }
+        $view .= "</table>";
+
+        // Create title
+        $companyInfos = $model->getCompanyName($request->getGetArg('id'));
+        $title = "Movies produced by " . $companyInfos['name'] . " (" . ($companyInfos['country'] ? $companyInfos['country'] : "country unknown") . ")";
+
+        return ILARIA_ApplicationAsynchronous::buildModalAjaxResponse(array(
+            ILARIA_ApplicationAsynchronous::MODAL_TITLE => $title,
+            ILARIA_ApplicationAsynchronous::MODAL_CONTENT => $view,
+            ILARIA_ApplicationAsynchronous::MODAL_BUTTONS => array(
+                array(
+                    ILARIA_ApplicationAsynchronous::MODAL_BUTTON_STYLE => "default",
+                    ILARIA_ApplicationAsynchronous::MODAL_BUTTON_TITLE => "Close",
+                    ILARIA_ApplicationAsynchronous::MODAL_BUTTON_ACTION => ILARIA_ApplicationAsynchronous::MODAL_ACTION_DISMISS,
+                )
+            ),
+        ));
+    }
+
+    public function action_companydistributed($request)
+    {
+        // Get model
+        $model = $this->getModel("search");
+
+        // Gather list of movies
+        $movies = $model->getMoviesDistributedByCompany($request->getGetArg('id'));
+
+        // Deal with error
+        if (!is_array($movies))
+        {
+            throw new ILARIA_CoreError("An error occurred while searching through the movies",
+                ILARIA_CoreError::GEN_ASYNC_QUERY_FAILED,
+                ILARIA_CoreError::LEVEL_ADMIN);
+        }
+
+        // Create view
+        $view = "<table class=\\\"table table-striped table-condensed\\\">";
+        $view .= "<tr><th>Title</th><th>Year</th><th></th></tr>";
+        foreach ($movies as $movie)
+        {
+            $view .= "<tr><td>" . $movie['title'] . "</td><td>" . ($movie['year'] ? $movie['year'] : '?') . "</td><td><a class=\\\"btn btn-default\\\" href=\\\"" . ILARIA_ConfigurationGlobal::buildRequestChain("production","details",array("id" => $movie['id'])) . "\\\" role=\\\"button\\\"><span class=\\\"glyphicon glyphicon-arrow-right\\\" aria-hidden=\\\"true\\\"></span> see details</a></td></tr>";
+        }
+        $view .= "</table>";
+
+        // Create title
+        $companyInfos = $model->getCompanyName($request->getGetArg('id'));
+        $title = "Movies distributed by " . $companyInfos['name'] . " (" . ($companyInfos['country'] ? $companyInfos['country'] : "country unknown") . ")";
+
+        return ILARIA_ApplicationAsynchronous::buildModalAjaxResponse(array(
+            ILARIA_ApplicationAsynchronous::MODAL_TITLE => $title,
+            ILARIA_ApplicationAsynchronous::MODAL_CONTENT => $view,
+            ILARIA_ApplicationAsynchronous::MODAL_BUTTONS => array(
+                array(
+                    ILARIA_ApplicationAsynchronous::MODAL_BUTTON_STYLE => "default",
+                    ILARIA_ApplicationAsynchronous::MODAL_BUTTON_TITLE => "Close",
+                    ILARIA_ApplicationAsynchronous::MODAL_BUTTON_ACTION => ILARIA_ApplicationAsynchronous::MODAL_ACTION_DISMISS,
+                )
+            ),
+        ));
+    }
+
+    public function action_gendersbase($request)
+    {
+        $params = array();
+        if ($request->existGetArg('name'))
+        {
+            $params['name'] = $request->getGetArg('name');
+        }
+        return $this->getAsynchronous("searchgendersbase")->getContent($params);
+    }
+
+    public function action_gendermovies($request)
+    {
+        // Get model
+        $model = $this->getModel("search");
+
+        // Gather list of movies
+        $movies = $model->getMoviesHavingGender($request->getGetArg('id'));
+
+        // Deal with error
+        if (!is_array($movies))
+        {
+            throw new ILARIA_CoreError("An error occurred while searching through the movies",
+                ILARIA_CoreError::GEN_ASYNC_QUERY_FAILED,
+                ILARIA_CoreError::LEVEL_ADMIN);
+        }
+
+        // Create view
+        $view = "<table class=\\\"table table-striped table-condensed\\\">";
+        $view .= "<tr><th>Title</th><th>Year</th><th></th></tr>";
+        foreach ($movies as $movie)
+        {
+            $view .= "<tr><td>" . $movie['title'] . "</td><td>" . ($movie['year'] ? $movie['year'] : '?') . "</td><td><a class=\\\"btn btn-default\\\" href=\\\"" . ILARIA_ConfigurationGlobal::buildRequestChain("production","details",array("id" => $movie['id'])) . "\\\" role=\\\"button\\\"><span class=\\\"glyphicon glyphicon-arrow-right\\\" aria-hidden=\\\"true\\\"></span> see details</a></td></tr>";
+        }
+        $view .= "</table>";
+
+        // Create title
+        $genderInfos = $model->getGenderName($request->getGetArg('id'));
+        $title = "Movies in gender " . $genderInfos['name'];
 
         return ILARIA_ApplicationAsynchronous::buildModalAjaxResponse(array(
             ILARIA_ApplicationAsynchronous::MODAL_TITLE => $title,

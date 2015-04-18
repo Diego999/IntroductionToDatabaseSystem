@@ -24,7 +24,7 @@ class CompanyController extends ILARIA_ApplicationController
 
         // Create menu
         $menu = $this->getMenu('main');
-        $menu->setActiveEntry(MainMenu::ENTRY_PRODUCTIONS);
+        $menu->setActiveEntry(MainMenu::ENTRY_COMPANIES);
         ILARIA_ApplicationMenu::registerMenu(MainMenu::MAIN_MENU_KEY, $menu);
 
         // Define template
