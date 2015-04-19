@@ -46,6 +46,14 @@ class SearchresultView extends ILARIA_ApplicationView
         $this->output($data['personsbase']->getStructure(array('name' => $data['search'])));
         $this->output("</div>");
 
+        // Productions list
+        $this->output("<div class=\"panel panel-default\">");
+        $this->output("<div class=\"panel-heading\">");
+        $this->output($data['productionsbase']->getPaginator());
+        $this->output("</div>");
+        $this->output($data['productionsbase']->getStructure(array('name' => $data['search'])));
+        $this->output("</div>");
+
         // End main panel
         $this->output("</div>");
 

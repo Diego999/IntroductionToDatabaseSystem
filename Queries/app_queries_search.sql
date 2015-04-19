@@ -120,3 +120,18 @@ WHERE
 	)
 GROUP BY PE.`id`
 ORDER BY NA_MAIN.`lastname` ASC, NA_MAIN.`firstname` ASC;
+
+-- Search all productions, following the LIKE condition on title (here Hunger Games)
+SELECT DISTINCT PR.`id`, TI_MAIN.`title`, PR.`year`, GE.`name` AS `gender`
+FROM
+	`production` PR
+    INNER JOIN (
+		SELECT TI.`id`, TI.`production_id` AS `prod_id`
+		FROM
+			`title` TI
+		WHERE TI.`title` COLLATE UTF8_GENERAL_CI LIKE "%hunger games%"
+	) TI_SEARCH ON PR.`id` = TI_SEARCH.`prod_id`
+    INNER JOIN `title` TI_MAIN ON PR.`title_id` = TI_MAIN.`id`
+    LEFT JOIN `gender` GE ON PR.`gender_id` = GE.`id`
+GROUP BY PR.`id`
+ORDER BY PR.`year` DESC, TI_MAIN.`title` ASC;

@@ -379,4 +379,39 @@ class SearchModel extends ILARIA_ApplicationModel
             return -1;
         }
     }
+
+    public function getProductionsLikeName($name)
+    {
+        try
+        {
+            $sql = "SELECT DISTINCT PR.`id`, TI_MAIN.`title`, PR.`year`, GE.`name` AS `gender`"
+                . " FROM `production` PR"
+                . " INNER JOIN ("
+                . " SELECT TI.`id`, TI.`production_id` AS `prod_id`"
+                . " FROM `title` TI"
+                . " WHERE TI.`title` COLLATE UTF8_GENERAL_CI LIKE \"%" . $name . "%\""
+                . " ) TI_SEARCH ON PR.`id` = TI_SEARCH.`prod_id`"
+                . " INNER JOIN `title` TI_MAIN ON PR.`title_id` = TI_MAIN.`id`"
+                . " LEFT JOIN `gender` GE ON PR.`gender_id` = GE.`id`"
+                . " GROUP BY PR.`id`"
+                . " ORDER BY PR.`year` DESC, TI_MAIN.`title` ASC";
+            $query = new ILARIA_DatabaseQuery($sql);
+            $this->getDatabase()->query($query);
+            if ($query->getStatus() == 0)
+            {
+                return $query->getData();
+            }
+            else
+            {
+                throw new ILARIA_CoreError("Error in SearchModel::getProductionsLikeName : request returned status " . $query->getStatus(),
+                    ILARIA_CoreError::GEN_DB_QUERY_FAILED,
+                    ILARIA_CoreError::LEVEL_ADMIN);
+            }
+        }
+        catch (ILARIA_CoreError $e)
+        {
+            $e->writeToLog();
+            return -1;
+        }
+    }
 }
