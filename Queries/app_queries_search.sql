@@ -103,3 +103,20 @@ FROM
 WHERE
 	GE.`id`=19
 ORDER BY PR.`year` DESC, TI.`title` ASC;
+
+-- Search all persons, following the LIKE condition on firstname, lastname (here Jennifer Lawrence)
+SELECT DISTINCT PE.`id`, NA_MAIN.`lastname`, NA_MAIN.`firstname`, PE.`birthdate`, PE.`deathdate`
+FROM
+	`person` PE
+    INNER JOIN `name` NA_SEARCH ON PE.`id` = NA_SEARCH.`person_id`
+    INNER JOIN `name` NA_MAIN ON PE.`name_id` = NA_MAIN.`id`
+WHERE
+	(
+		NA_SEARCH.`lastname` COLLATE UTF8_GENERAL_CI LIKE "%jennifer%"
+		OR NA_SEARCH.`lastname` COLLATE UTF8_GENERAL_CI LIKE "%lawrence%"
+	) AND (
+		NA_SEARCH.`firstname` COLLATE UTF8_GENERAL_CI LIKE "%jennifer%"
+        OR NA_SEARCH.`firstname` COLLATE UTF8_GENERAL_CI LIKE "%lawrence%"
+	)
+GROUP BY PE.`id`
+ORDER BY NA_MAIN.`lastname` ASC, NA_MAIN.`firstname` ASC;

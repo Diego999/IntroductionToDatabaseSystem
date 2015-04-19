@@ -332,4 +332,51 @@ class SearchModel extends ILARIA_ApplicationModel
             return -1;
         }
     }
+
+    public function getPersonsLikeName($name)
+    {
+        // Break up name
+        $nameArray = explode(" ", trim($name));
+
+        try
+        {
+            $sql = "SELECT DISTINCT PE.`id`, NA_MAIN.`lastname`, NA_MAIN.`firstname`, PE.`birthdate`, PE.`deathdate`"
+                . " FROM `person` PE"
+                . " INNER JOIN `name` NA_SEARCH ON PE.`id` = NA_SEARCH.`person_id`"
+                . " INNER JOIN `name` NA_MAIN ON PE.`name_id` = NA_MAIN.`id`"
+                . " WHERE (";
+            $first = true;
+            foreach ($nameArray as $nameElem)
+            {
+                $sql .= ($first ? "" : " OR") . " NA_SEARCH.`lastname` COLLATE UTF8_GENERAL_CI LIKE \"%" . $nameElem . "%\"";
+                $first = false;
+            }
+            $sql .= ") AND (";
+            $first = true;
+            foreach ($nameArray as $nameElem)
+            {
+                $sql .= ($first ? "" : " OR") . " NA_SEARCH.`firstname` COLLATE UTF8_GENERAL_CI LIKE \"%" . $nameElem . "%\"";
+                $first = false;
+            }
+            $sql .= ") GROUP BY PE.`id`"
+                . " ORDER BY NA_MAIN.`lastname` ASC,  NA_MAIN.`firstname` ASC";
+            $query = new ILARIA_DatabaseQuery($sql);
+            $this->getDatabase()->query($query);
+            if ($query->getStatus() == 0)
+            {
+                return $query->getData();
+            }
+            else
+            {
+                throw new ILARIA_CoreError("Error in SearchModel::getPersonsLikeName : request returned status " . $query->getStatus(),
+                    ILARIA_CoreError::GEN_DB_QUERY_FAILED,
+                    ILARIA_CoreError::LEVEL_ADMIN);
+            }
+        }
+        catch (ILARIA_CoreError $e)
+        {
+            $e->writeToLog();
+            return -1;
+        }
+    }
 }

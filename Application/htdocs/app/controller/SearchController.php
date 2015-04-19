@@ -33,6 +33,10 @@ class SearchController extends ILARIA_ApplicationController
             case 'gendermovies':
                 return true;
 
+            // Search for persons
+            case 'personsbase':
+                return true;
+
             default:
                 return false;
         }
@@ -75,6 +79,7 @@ class SearchController extends ILARIA_ApplicationController
         $asyncCharacters = $this->getAsynchronous("searchcharactersbase");
         $asyncCompanies = $this->getAsynchronous("searchcompaniesbase");
         $asyncGenders = $this->getAsynchronous("searchgendersbase");
+        $asyncPersons = $this->getAsynchronous("searchpersonsbase");
 
         // Output to view
         $view->prepare(array(
@@ -82,6 +87,7 @@ class SearchController extends ILARIA_ApplicationController
             'charactersbase' => $asyncCharacters,
             'companiesbase' => $asyncCompanies,
             'gendersbase' => $asyncGenders,
+            'personsbase' => $asyncPersons,
         ));
 
         // Return view
@@ -324,6 +330,16 @@ class SearchController extends ILARIA_ApplicationController
                 ),
             ),
         ));
+    }
+
+    public function action_personsbase($request)
+    {
+        $params = array();
+        if ($request->existGetArg('name'))
+        {
+            $params['name'] = $request->getGetArg('name');
+        }
+        return $this->getAsynchronous("searchpersonsbase")->getContent($params);
     }
 
 }
