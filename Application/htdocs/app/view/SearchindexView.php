@@ -36,6 +36,7 @@ class SearchindexView extends ILARIA_ApplicationView
         $this->output("<input type=\"text\" class=\"form-control\" id=\"input-value\" name=\"input-value\" placeholder=\"Text to search\" />");
         $this->output("</div>");
         $this->output("<div class=\"col-sm-3\">");
+        $this->output("<input type=\"hidden\" id=\"input-simple\" name=\"input-simple\" value=\"simple\" />");
         $this->output("<button type=\"submit\" class=\"btn btn-default\">Search</button>");
         $this->output("</div>");
         $this->output("</div>");
@@ -64,7 +65,32 @@ class SearchindexView extends ILARIA_ApplicationView
         $this->output("<div id=\"acc-search-advanced-content\" class=\"panel-collapse collapse\" role=\"tabpanel\" aria-labelledby=\"acc-search-advanced-title\">");
         $this->output("<div class=\"panel-body\">");
 
-        $this->output("coming soon...");
+        // Form
+        $this->output("<form class=\"form-horizontal\" action=\"" . ILARIA_ConfigurationGlobal::buildRequestChain('search', 'result', array()) . "\" method=\"post\">");
+        $this->output("<div class=\"form-group\">");
+        $this->output("<label for=\"input-value\" class=\"col-sm-3 control-label\">Search for</label>");
+        $this->output("<div class=\"col-sm-6\">");
+        $this->output("<input type=\"text\" class=\"form-control\" id=\"input-value\" name=\"input-value\" placeholder=\"Text to search\" />");
+        $this->output("</div>");
+        $this->output("</div>");
+        $this->output("<div class=\"form-group\">");
+        $this->output("<label class=\"col-sm-3 control-label\">Search in</label>");
+        $this->output("<div class=\"col-sm-6\">");
+        $this->output("<table>");
+        $this->output("<tr><td><input type=\"checkbox\" id=\"input-search-productions\" name=\"input-search-productions\" value=\"productions\" /></td><td style=\"padding-left:10px\">productions</td></tr>");
+        $this->output("<tr><td><input type=\"checkbox\" id=\"input-search-persons\" name=\"input-search-persons\" value=\"persons\" /></td><td style=\"padding-left:10px\">persons</td></tr>");
+        $this->output("<tr><td><input type=\"checkbox\" id=\"input-search-characters\" name=\"input-search-characters\" value=\"characters\" /></td><td style=\"padding-left:10px\">characters</td></tr>");
+        $this->output("<tr><td><input type=\"checkbox\" id=\"input-search-companies\" name=\"input-search-companies\" value=\"companies\" /></td><td style=\"padding-left:10px\">companies</td></tr>");
+        $this->output("<tr><td><input type=\"checkbox\" id=\"input-search-genders\" name=\"input-search-genders\" value=\"genders\" /></td><td style=\"padding-left:10px\">genres</td></tr>");
+        $this->output("</table>");
+        $this->output("</div>");
+        $this->output("</div>");
+        $this->output("<div class=\"form-group\">");
+        $this->output("<div class=\"col-sm-3 col-sm-offset-3\">");
+        $this->output("<button type=\"submit\" class=\"btn btn-default\">Search</button>");
+        $this->output("</div>");
+        $this->output("</div>");
+        $this->output("</form>");
 
         // End of content
         $this->output("</div>");

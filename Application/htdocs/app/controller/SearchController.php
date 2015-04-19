@@ -79,22 +79,36 @@ class SearchController extends ILARIA_ApplicationController
         // Define template
         $view->setTemplateName('frontend');
 
-        // Load asynchronous module
-        $asyncCharacters = $this->getAsynchronous("searchcharactersbase");
-        $asyncCompanies = $this->getAsynchronous("searchcompaniesbase");
-        $asyncGenders = $this->getAsynchronous("searchgendersbase");
-        $asyncPersons = $this->getAsynchronous("searchpersonsbase");
-        $asyncProductions = $this->getAsynchronous("searchproductionsbase");
+        // Prepare view params
+        $params = array(
+            'search' => $request->getPostArg('input-value'),
+        );
+
+        // Define on what to do search
+        $isSimple = $request->existPostArg('input-simple');
+        if ($request->existPostArg('input-search-productions') || $isSimple)
+        {
+            $params['productionsbase'] = $this->getAsynchronous("searchproductionsbase");
+        }
+        if ($request->existPostArg('input-search-persons') || $isSimple)
+        {
+            $params['personsbase'] = $this->getAsynchronous("searchpersonsbase");
+        }
+        if ($request->existPostArg('input-search-characters') || $isSimple)
+        {
+            $params['charactersbase'] = $this->getAsynchronous("searchcharactersbase");
+        }
+        if ($request->existPostArg('input-search-companies') || $isSimple)
+        {
+            $params['companiesbase'] = $this->getAsynchronous("searchcompaniesbase");
+        }
+        if ($request->existPostArg('input-search-genders') || $isSimple)
+        {
+            $params['gendersbase'] = $this->getAsynchronous("searchgendersbase");
+        }
 
         // Output to view
-        $view->prepare(array(
-            'search' => $request->getPostArg('input-value'),
-            'charactersbase' => $asyncCharacters,
-            'companiesbase' => $asyncCompanies,
-            'gendersbase' => $asyncGenders,
-            'personsbase' => $asyncPersons,
-            'productionsbase' => $asyncProductions,
-        ));
+        $view->prepare($params);
 
         // Return view
         return $view;

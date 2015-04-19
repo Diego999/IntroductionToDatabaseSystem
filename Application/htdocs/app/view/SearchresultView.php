@@ -14,45 +14,60 @@ class SearchresultView extends ILARIA_ApplicationView
         // Title
         $this->output("<h2>Search results for \"" . $data['search'] . "\"</h2>");
 
-        // Characters list
-        $this->output("<div class=\"panel panel-default\">");
-        $this->output("<div class=\"panel-heading\">");
-        $this->output($data['charactersbase']->getPaginator());
-        $this->output("</div>");
-        $this->output($data['charactersbase']->getStructure(array('name' => $data['search'])));
-        $this->output("</div>");
-
-        // Companies list
-        $this->output("<div class=\"panel panel-default\">");
-        $this->output("<div class=\"panel-heading\">");
-        $this->output($data['companiesbase']->getPaginator());
-        $this->output("</div>");
-        $this->output($data['companiesbase']->getStructure(array('name' => $data['search'])));
-        $this->output("</div>");
-
-        // Genders list
-        $this->output("<div class=\"panel panel-default\">");
-        $this->output("<div class=\"panel-heading\">");
-        $this->output($data['gendersbase']->getPaginator());
-        $this->output("</div>");
-        $this->output($data['gendersbase']->getStructure(array('name' => $data['search'])));
-        $this->output("</div>");
+        // Productions list
+        if (isset($data['productionsbase']))
+        {
+            $this->output("<div class=\"panel panel-default\">");
+            $this->output("<div class=\"panel-heading\">");
+            $this->output($data['productionsbase']->getPaginator());
+            $this->output("</div>");
+            $this->output($data['productionsbase']->getStructure(array('name' => $data['search'])));
+            $this->output("</div>");
+        }
 
         // Persons list
-        $this->output("<div class=\"panel panel-default\">");
-        $this->output("<div class=\"panel-heading\">");
-        $this->output($data['personsbase']->getPaginator());
-        $this->output("</div>");
-        $this->output($data['personsbase']->getStructure(array('name' => $data['search'])));
-        $this->output("</div>");
+        if (isset($data['personsbase']))
+        {
+            $this->output("<div class=\"panel panel-default\">");
+            $this->output("<div class=\"panel-heading\">");
+            $this->output($data['personsbase']->getPaginator());
+            $this->output("</div>");
+            $this->output($data['personsbase']->getStructure(array('name' => $data['search'])));
+            $this->output("</div>");
+        }
 
-        // Productions list
-        $this->output("<div class=\"panel panel-default\">");
-        $this->output("<div class=\"panel-heading\">");
-        $this->output($data['productionsbase']->getPaginator());
-        $this->output("</div>");
-        $this->output($data['productionsbase']->getStructure(array('name' => $data['search'])));
-        $this->output("</div>");
+        // Characters list
+        if (isset($data['charactersbase']))
+        {
+            $this->output("<div class=\"panel panel-default\">");
+            $this->output("<div class=\"panel-heading\">");
+            $this->output($data['charactersbase']->getPaginator());
+            $this->output("</div>");
+            $this->output($data['charactersbase']->getStructure(array('name' => $data['search'])));
+            $this->output("</div>");
+        }
+
+        // Companies list
+        if (isset($data['companiesbase']))
+        {
+            $this->output("<div class=\"panel panel-default\">");
+            $this->output("<div class=\"panel-heading\">");
+            $this->output($data['companiesbase']->getPaginator());
+            $this->output("</div>");
+            $this->output($data['companiesbase']->getStructure(array('name' => $data['search'])));
+            $this->output("</div>");
+        }
+
+        // Genders list
+        if (isset($data['gendersbase']))
+        {
+            $this->output("<div class=\"panel panel-default\">");
+            $this->output("<div class=\"panel-heading\">");
+            $this->output($data['gendersbase']->getPaginator());
+            $this->output("</div>");
+            $this->output($data['gendersbase']->getStructure(array('name' => $data['search'])));
+            $this->output("</div>");
+        }
 
         // End main panel
         $this->output("</div>");
