@@ -84,7 +84,7 @@ class ILARIA_ConfigurationGlobal
     private static $securityFiles = array('Manager', 'Access', 'Encryption');
     private static $databaseFiles = array('Manager', 'Instance', 'Query');
     private static $applicationFiles = array('Model', 'View', 'Controller', 'Template', 'Menu', 'Asynchronous');
-    private static $moduleFiles = array('Mysql', 'NoAuth');
+    private static $moduleFiles = array('Mysql', 'NoAuth', 'Formbuilder');
 
     // default controller and action to execute
     private static $defaultController = 'home';
