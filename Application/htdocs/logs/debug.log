@@ -20,13 +20,13 @@
 [ILARIA_CoreModule::registerModule] registered module NoAuth
 [include.php] whole framework loaded
 [ILARIA_CoreDispatcher::__construct] Loading dispatcher
-[ILARIA_CoreDispatcher::__construct] Request chain : /search/index/
-[ILARIA_CoreRequest::__construct] request type is TYPE_HTTP
-[ILARIA_CoreRequest::__construct] controller name : search
-[ILARIA_CoreRequest::__construct] action name : index
+[ILARIA_CoreDispatcher::__construct] Request chain : /directaccess/misclisttypes/
+[ILARIA_CoreRequest::__construct] request type is TYPE_AJAX
+[ILARIA_CoreRequest::__construct] controller name : directaccess
+[ILARIA_CoreRequest::__construct] action name : misclisttypes
 [ILARIA_CoreDispatcher::dispatch] Starting dispatch process
 [ILARIA_CoreModule::loadModules] loaded module Mysql offering services SERVICE_DATABASE_RELATIONAL,
 [ILARIA_CoreModule::loadModules] loaded module NoAuth offering services SERVICE_SECURITY_ACCESS,
-[ILARIA_CoreDispatcher::actionWrap] Building controller with name search
-[ILARIA_CoreDispatcher::actionWrap] Calling action with name action_index
-[ILARIA_CoreDispatcher::prepareTemplate] Building template with name frontend
+[ILARIA_CoreDispatcher::actionWrap] Building controller with name directaccess
+[ILARIA_CoreDispatcher::actionWrap] Calling action with name action_misclisttypes
+[ILARIA_CoreDispatcher::prepareTemplate] Building template with name ajax

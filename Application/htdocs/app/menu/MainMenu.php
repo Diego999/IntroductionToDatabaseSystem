@@ -10,6 +10,7 @@ class MainMenu extends ILARIA_ApplicationMenu
     const ENTRY_PRODUCTIONS = '3ed499f315dce8678ce870578bb505e78041073d';
     const ENTRY_PERSONS = '87e2b43254b354ab754bfcad33ff4caa614294f9';
     const ENTRY_COMPANIES = 'da55515eda71d9e9d8199b0ad4b1843f161c559b';
+    const ENTRY_MISCELLANEOUS = 'b7d68b15c0d5d313615160981eb1dd544c5e7597';
 
     public function display()
     {
@@ -20,6 +21,7 @@ class MainMenu extends ILARIA_ApplicationMenu
             case self::ENTRY_PRODUCTIONS:
             case self::ENTRY_PERSONS:
             case self::ENTRY_COMPANIES:
+            case self::ENTRY_MISCELLANEOUS:
                 $activeEntry = self::ENTRY_DIRECT_ACCESS;
                 break;
             default:
@@ -91,6 +93,11 @@ class MainMenu extends ILARIA_ApplicationMenu
                         ILARIA_ApplicationMenu::KEY_NAME => 'Companies',
                         ILARIA_ApplicationMenu::KEY_LINK => ILARIA_ConfigurationGlobal::buildRequestChain('directaccess', 'companies', array())
                     ),
+                    array(
+                        ILARIA_ApplicationMenu::KEY_ID => self::ENTRY_MISCELLANEOUS,
+                        ILARIA_ApplicationMenu::KEY_NAME => 'Miscellaneous',
+                        ILARIA_ApplicationMenu::KEY_LINK => ILARIA_ConfigurationGlobal::buildRequestChain('directaccess', 'miscellaneous', array())
+                    )
                 ),
             ),
         );

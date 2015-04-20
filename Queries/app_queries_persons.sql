@@ -63,3 +63,7 @@ UNION DISTINCT
 		CA.`person_id` = 1831321
 	GROUP BY PR_SER.`id`, RO.`name`, CH.`name`
 );
+
+-- gather the statistics about persons
+SELECT COUNT(DISTINCT `id`) AS `count_person`
+FROM `person`;

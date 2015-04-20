@@ -54,3 +54,7 @@ UNION DISTINCT
 	GROUP BY PR_SER.`id`, TY.`id`
 )
 ORDER BY `title`, `type`;
+
+-- gather the statistics about companies
+SELECT COUNT(DISTINCT `id`) AS `count_company`
+FROM `company`;

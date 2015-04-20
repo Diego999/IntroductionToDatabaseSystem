@@ -45,3 +45,11 @@ ul.pagination {
     margin-top: 0px;
     margin-bottom: 0px;
 }
+
+tr.insertor {
+    background-color: #ffbdbd;
+}
+
+tr.insertor > td {
+    text-align: center;
+}

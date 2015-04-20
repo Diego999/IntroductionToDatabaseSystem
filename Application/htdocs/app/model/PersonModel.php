@@ -8,6 +8,7 @@ class PersonModel extends ILARIA_ApplicationModel
 
     protected function getDbConnectionSettings() { return ILARIA_ModuleMysql::getConnectionSettings(); }
 
+    // used in person details page : infos on a person
     public function getPersonInfosGeneral($personId)
     {
         try
@@ -36,6 +37,7 @@ class PersonModel extends ILARIA_ApplicationModel
         }
     }
 
+    // used in person details page : list of alternative names
     public function getPersonInfosAlternativeNames($personId, $mainNameId)
     {
         try
@@ -64,6 +66,7 @@ class PersonModel extends ILARIA_ApplicationModel
         }
     }
 
+    // used in person details page : list of roles in movies
     public function getPersonInfosRolesSingleProd($personId)
     {
         try
@@ -98,6 +101,7 @@ class PersonModel extends ILARIA_ApplicationModel
         }
     }
 
+    // used in person details page : list of roles in series
     public function getPersonInfosRolesSeries($personId)
     {
         try
@@ -139,6 +143,33 @@ class PersonModel extends ILARIA_ApplicationModel
             else
             {
                 throw new ILARIA_CoreError("Error in PersonModel::getPersonInfosRolesSeries : request returned status " . $query->getStatus(),
+                    ILARIA_CoreError::GEN_DB_QUERY_FAILED,
+                    ILARIA_CoreError::LEVEL_ADMIN);
+            }
+        }
+        catch (ILARIA_CoreError $e)
+        {
+            $e->writeToLog();
+            return -1;
+        }
+    }
+
+    // used in person direct access page : get the statistics
+    public function getStatistics()
+    {
+        try
+        {
+            $sql = "SELECT COUNT(DISTINCT `id`) AS `count_person`"
+                . " FROM `person`";
+            $query = new ILARIA_DatabaseQuery($sql);
+            $this->getDatabase()->query($query);
+            if ($query->getStatus() == 0 && $query->getCount() == 1)
+            {
+                return $query->getData()[0];
+            }
+            else
+            {
+                throw new ILARIA_CoreError("Error in PersonModel::getStatistics : request returned status " . $query->getStatus(),
                     ILARIA_CoreError::GEN_DB_QUERY_FAILED,
                     ILARIA_CoreError::LEVEL_ADMIN);
             }

@@ -109,6 +109,22 @@ FROM
 WHERE
 	TI.`production_id`=2998449
     AND TI.`id`!=2998451;
+    
+-- gather the statistics about all productions
+SELECT SINGLE.`count` AS `count_single`, SERIE.`count` AS `count_serie`, EPISODE.`count` AS `count_episode`
+FROM
+	(
+		SELECT COUNT(`id`) AS `count`
+        FROM `singleproduction`
+    ) SINGLE,
+    (
+		SELECT COUNT(`id`) AS `count`
+        FROM `serie`
+    ) SERIE,
+    (
+		SELECT COUNT(`id`) AS `count`
+        FROM `episode`
+    ) EPISODE
 
 
 

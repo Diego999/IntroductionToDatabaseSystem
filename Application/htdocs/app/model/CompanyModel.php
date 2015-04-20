@@ -8,6 +8,7 @@ class CompanyModel extends ILARIA_ApplicationModel
 
     protected function getDbConnectionSettings() { return ILARIA_ModuleMysql::getConnectionSettings(); }
 
+    // used in company details page : infos on company
     public function getCompanyInfos($companyId)
     {
         try
@@ -36,6 +37,7 @@ class CompanyModel extends ILARIA_ApplicationModel
         }
     }
 
+    // used in company details page : list of movies
     public function getCompanyInfosWorkSingle($companyId)
     {
         try
@@ -70,6 +72,7 @@ class CompanyModel extends ILARIA_ApplicationModel
         }
     }
 
+    // used in company details page : list of series
     public function getCompanyInfosWorkSeries($companyId)
     {
         try
@@ -109,6 +112,33 @@ class CompanyModel extends ILARIA_ApplicationModel
             else
             {
                 throw new ILARIA_CoreError("Error in CompanyModel::getCompanyInfosWorkSeries : request returned status " . $query->getStatus(),
+                    ILARIA_CoreError::GEN_DB_QUERY_FAILED,
+                    ILARIA_CoreError::LEVEL_ADMIN);
+            }
+        }
+        catch (ILARIA_CoreError $e)
+        {
+            $e->writeToLog();
+            return -1;
+        }
+    }
+
+    // used in company direct access page : get the statistics
+    public function getStatistics()
+    {
+        try
+        {
+            $sql = "SELECT COUNT(DISTINCT `id`) AS `count_company`"
+                . " FROM `company`";
+            $query = new ILARIA_DatabaseQuery($sql);
+            $this->getDatabase()->query($query);
+            if ($query->getStatus() == 0 && $query->getCount() == 1)
+            {
+                return $query->getData()[0];
+            }
+            else
+            {
+                throw new ILARIA_CoreError("Error in CompanyModel::getStatistics : request returned status " . $query->getStatus(),
                     ILARIA_CoreError::GEN_DB_QUERY_FAILED,
                     ILARIA_CoreError::LEVEL_ADMIN);
             }

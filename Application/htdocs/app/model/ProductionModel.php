@@ -12,6 +12,7 @@ class ProductionModel extends ILARIA_ApplicationModel
     const CARD_SERIE = 'a87213e43ac6b8d92be460427c1031e3ab26b238';
     const CARD_EPISODE = 'a5220d1ce7bdd2037d90a24677fcd9a6927c1c28';
 
+    // used in production details page : determine kind of production (ISA hierarchy)
     public function getProductionCardinality($productionId)
     {
         try
@@ -67,6 +68,7 @@ class ProductionModel extends ILARIA_ApplicationModel
         }
     }
 
+    // used in production details page : infos of a singleproduction
     public function getSingleInfosGeneral($productionId)
     {
         try
@@ -98,6 +100,7 @@ class ProductionModel extends ILARIA_ApplicationModel
         }
     }
 
+    // used in production details page : infos of an episode
     public function getEpisodeInfosGeneral($productionId)
     {
         try
@@ -132,6 +135,7 @@ class ProductionModel extends ILARIA_ApplicationModel
         }
     }
 
+    // used in production details page : infos of a serie
     public function getSerieInfosGeneral($productionId)
     {
         try
@@ -165,6 +169,7 @@ class ProductionModel extends ILARIA_ApplicationModel
         }
     }
 
+    // used in production details page : list of seasons in a serie
     public function getSeasonsList($serieId)
     {
         try
@@ -195,6 +200,7 @@ class ProductionModel extends ILARIA_ApplicationModel
         }
     }
 
+    // used in production details page : informations about a season (serie name, season number)
     public function getSeasonInfos($seasonId)
     {
         try
@@ -225,6 +231,7 @@ class ProductionModel extends ILARIA_ApplicationModel
         }
     }
 
+    // used in production details page : list of episodes in a given season
     public function getEpisodesList($seasonId)
     {
         try
@@ -255,6 +262,7 @@ class ProductionModel extends ILARIA_ApplicationModel
         }
     }
 
+    // used in production details page : get the casting (persons, characters, roles, ...)
     public function getProductionCasting($productionId)
     {
         try
@@ -286,6 +294,7 @@ class ProductionModel extends ILARIA_ApplicationModel
         }
     }
 
+    // used in production details page : get the companies
     public function getProductionCompanies($productionId)
     {
         try
@@ -316,6 +325,7 @@ class ProductionModel extends ILARIA_ApplicationModel
         }
     }
 
+    // used in production details page : get the alternative titles
     public function getProductionAlternativeTitles($productionId, $mainTitleId)
     {
         try
@@ -333,6 +343,36 @@ class ProductionModel extends ILARIA_ApplicationModel
             else
             {
                 throw new ILARIA_CoreError("Error in ProductionModel::getProductionAlternativeTitles : request returned status " . $query->getStatus(),
+                    ILARIA_CoreError::GEN_DB_QUERY_FAILED,
+                    ILARIA_CoreError::LEVEL_ADMIN);
+            }
+        }
+        catch (ILARIA_CoreError $e)
+        {
+            $e->writeToLog();
+            return -1;
+        }
+    }
+
+    // used in production direct access page : get the statistics
+    public function getStatistics()
+    {
+        try
+        {
+            $sql = "SELECT SINGLE.`count` AS `count_single`, SERIE.`count` AS `count_serie`, EPISODE.`count` AS `count_episode`"
+                . " FROM"
+                . " (SELECT COUNT(`id`) AS `count` FROM `singleproduction`) SINGLE,"
+                . " (SELECT COUNT(`id`) AS `count` FROM `serie`) SERIE,"
+                . " (SELECT COUNT(`id`) AS `count` FROM `episode`) EPISODE";
+            $query = new ILARIA_DatabaseQuery($sql);
+            $this->getDatabase()->query($query);
+            if ($query->getStatus() == 0 && $query->getCount() == 1)
+            {
+                return $query->getData()[0];
+            }
+            else
+            {
+                throw new ILARIA_CoreError("Error in ProductionModel::getStatistics : request returned status " . $query->getStatus(),
                     ILARIA_CoreError::GEN_DB_QUERY_FAILED,
                     ILARIA_CoreError::LEVEL_ADMIN);
             }
