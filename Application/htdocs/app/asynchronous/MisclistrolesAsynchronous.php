@@ -15,8 +15,8 @@ class MisclistrolesAsynchronous extends ILARIA_ApplicationAsynchronous
     protected function getDisplayStructure()
     {
         return "<table class=\"table\" id=\"" . $this->getContainerId() . "\">"
-        . "<tr class=\"insertor\"><td colspan=\"2\"><a class=\"btn btn-danger btn-sm\" href=\"" . ILARIA_ConfigurationGlobal::buildRequestChain("role", "insert", array()) . "\" role=\"button\"><span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span> insert</a></td></tr>"
-            . "<tr id=\"" . $this->getLoadingId() . "\"><td colspan=\"2\" style=\"text-align:center\">" . $this->getLoadingGif() . "</td></tr>"
+        . "<tr class=\"insertor\"><td colspan=\"3\"><a class=\"btn btn-danger btn-sm\" href=\"" . ILARIA_ConfigurationGlobal::buildRequestChain("role", "insert", array()) . "\" role=\"button\"><span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span> insert</a></td></tr>"
+            . "<tr id=\"" . $this->getLoadingId() . "\"><td colspan=\"3\" style=\"text-align:center\">" . $this->getLoadingGif() . "</td></tr>"
             . "</table>";
     }
 
@@ -24,14 +24,15 @@ class MisclistrolesAsynchronous extends ILARIA_ApplicationAsynchronous
     {
         return "<tr class=\\\"" . $this->getElementClass() . "\\\">"
             . "<td>:name</td>"
-            . "<td>:id</td>"
+            . "<td><a class=\\\"btn btn-danger btn-xs\\\" href=\\\"" . ILARIA_ConfigurationGlobal::buildRequestChain("role", "update", array('id' => ':id')) . "\\\" role=\\\"button\\\"><span class=\\\"glyphicon glyphicon-pencil\\\" aria-hidden=\\\"true\\\"></span> update</a></td>"
+            . "<td><a class=\\\"btn btn-danger btn-xs\\\" href=\\\"#\\\" role=\\\"button\\\" " . ILARIA_ApplicationAsynchronous::getModalOnClickShow(ILARIA_ConfigurationGlobal::buildRequestChain('role', 'delete', array('id' => ':id')), true) . "><span class=\\\"glyphicon glyphicon-trash\\\" aria-hidden=\\\"true\\\"></span> delete</a></td>"
             . "</tr>";
     }
 
     protected function getDisplayError()
     {
         return "<tr>"
-        . "<td colspan=\\\"2\\\" style=\\\"text-align:center; font-weight: bold; font-color: #0066ff\\\">:error</td>"
+        . "<td colspan=\\\"3\\\" style=\\\"text-align:center; font-weight: bold; font-color: #0066ff\\\">:error</td>"
         . "</tr>";
     }
 

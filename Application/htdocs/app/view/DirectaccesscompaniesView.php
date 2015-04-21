@@ -10,6 +10,9 @@ class DirectaccesscompaniesView extends ILARIA_ApplicationView
         // Begin box
         $this->output("<div class=\"col-md-4 col-md-offset-4\">");
 
+        // Title
+        $this->output("<h3>Companies</h3>");
+
         // Table with infos
         $this->output("<table class=\"table\">");
         $this->output("<tr><th>Count</th><th></th></tr>");

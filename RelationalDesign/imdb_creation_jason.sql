@@ -49,8 +49,6 @@ CREATE TABLE `production` (
     KEY `idx_gender` (`gender_id`)
 );
 
-
-
 CREATE TABLE `casting` (
 	`id` INT UNSIGNED AUTO_INCREMENT,
     `person_id` INT UNSIGNED NOT NULL,
