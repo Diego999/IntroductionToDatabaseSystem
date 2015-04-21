@@ -15,7 +15,7 @@ class FormbuilderModel extends ILARIA_ApplicationModel
             $value = (is_numeric($value) ? intval($value) : $this->quote($value));
             $sql = "SELECT COUNT(T.`id`) AS `count`"
                 . " FROM `" . $table . "` T"
-                . " WHERE T.`" . $field . "`=" . $value
+                . " WHERE T.`" . $field . "` COLLATE UTF8_GENERAL_CI LIKE " . $value
                 . " AND T.`id`!=" . $ignore;
             $query = new ILARIA_DatabaseQuery($sql);
             $this->getDatabase()->query($query);
