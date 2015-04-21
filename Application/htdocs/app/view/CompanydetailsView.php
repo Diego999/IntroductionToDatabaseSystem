@@ -8,9 +8,18 @@ class CompanydetailsView extends ILARIA_ApplicationView
         $this->output("<div class=\"row row-pad-top-20\">");
 
         // Company name
-        $this->output("<div class=\"col-md-10 col-md-offset-1\">");
+        $this->output("<div class=\"col-md-5 col-md-offset-1\">");
         $this->output("<h2>" . $data['infos']['name'] . "</h2>");
         $this->output("</div>");
+
+        // SCUD buttons
+        $this->output("<div class=\"col-md-5\" style=\"text-align:right\">");
+        $this->output("<a class=\"btn btn-danger btn-md\" href=\"" . ILARIA_ConfigurationGlobal::buildRequestChain("company", "update", array('id' => $data['infos']['id'])) . "\" role=\"button\"><span class=\"glyphicon glyphicon-pencil\" aria-hidden=\"true\"></span> update</a>");
+        $this->output("<a class=\"btn btn-danger btn-md\" href=\"#\" role=\"button\" " . ILARIA_ApplicationAsynchronous::getModalOnClickShow(ILARIA_ConfigurationGlobal::buildRequestChain('company', 'delete', array('id' => $data['infos']['id'])), false) . "><span class=\"glyphicon glyphicon-trash\" aria-hidden=\"true\"></span> delete</a>");
+        $this->output("</div>");
+
+        $this->output("</div>");
+        $this->output("<div class=\"row\">");
 
         // Begin left panel
         $this->output("<div class=\"col-md-3 col-md-offset-1\">");
