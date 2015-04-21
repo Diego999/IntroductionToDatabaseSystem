@@ -12,7 +12,7 @@ class ProductioncastingAsynchronous extends ILARIA_ApplicationAsynchronous
         return ILARIA_ConfigurationGlobal::buildRequestChain("production", "asynccasting", $params);
     }
 
-    protected function getDisplayStructure()
+    protected function getDisplayStructure($params)
     {
         return "<table class=\"table\" id=\"" . $this->getContainerId() . "\">"
             . "<tr><th>Person</th><th>Role</th><th>Character</th></tr>"

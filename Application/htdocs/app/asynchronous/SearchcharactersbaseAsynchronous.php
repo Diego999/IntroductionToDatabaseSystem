@@ -12,7 +12,7 @@ class SearchcharactersbaseAsynchronous extends ILARIA_ApplicationAsynchronous
         return ILARIA_ConfigurationGlobal::buildRequestChain("search", "charactersbase", $params);
     }
 
-    protected function getDisplayStructure()
+    protected function getDisplayStructure($params)
     {
         return "<table class=\"table\" id=\"" . $this->getContainerId() . "\">"
             . "<tr><th>Name</th><th>Actors</th><th>Movies</th></tr>"

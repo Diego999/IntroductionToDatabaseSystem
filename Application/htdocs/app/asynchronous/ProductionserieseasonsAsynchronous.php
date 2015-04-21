@@ -12,7 +12,7 @@ class ProductionserieseasonsAsynchronous extends ILARIA_ApplicationAsynchronous
         return ILARIA_ConfigurationGlobal::buildRequestChain("production", "asyncserieseasons", $params);
     }
 
-    protected function getDisplayStructure()
+    protected function getDisplayStructure($params)
     {
         return "<table class=\"table\" id=\"" . $this->getContainerId() . "\">"
             . "<tr><th>Number</th><th>Episodes</th></tr>"

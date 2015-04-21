@@ -12,7 +12,7 @@ class CompanyworkseriesAsynchronous extends ILARIA_ApplicationAsynchronous
         return ILARIA_ConfigurationGlobal::buildRequestChain("company", "asyncworkseries", $params);
     }
 
-    protected function getDisplayStructure()
+    protected function getDisplayStructure($params)
     {
         return "<table class=\"table\" id=\"" . $this->getContainerId() . "\">"
             . "<tr><th>Title</th><th>Years</th><th>Genre</th><th>Appearances</th><th>Acted as</th></tr>"

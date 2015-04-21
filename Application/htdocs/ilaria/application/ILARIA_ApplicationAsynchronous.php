@@ -29,7 +29,7 @@ abstract class ILARIA_ApplicationAsynchronous
 
     public function getStructure($params = array())
     {
-        return $this->buildScript($params) . "\n" . $this->buildManager() . "\n" . $this->getDisplayStructure() . "\n";
+        return $this->buildScript($params) . "\n" . $this->buildManager() . "\n" . $this->getDisplayStructure($params) . "\n";
     }
 
     public function getPaginator()
@@ -233,7 +233,7 @@ abstract class ILARIA_ApplicationAsynchronous
 
     abstract protected function getUniqueIdentifier();
     abstract protected function getWebPath($params);
-    abstract protected function getDisplayStructure();
+    abstract protected function getDisplayStructure($params);
     abstract protected function getDisplayRow();
     abstract protected function getDisplayError();
     abstract protected function getDisplayPaginator();

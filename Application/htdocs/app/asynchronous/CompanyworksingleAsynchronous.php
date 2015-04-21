@@ -12,7 +12,7 @@ class CompanyworksingleAsynchronous extends ILARIA_ApplicationAsynchronous
         return ILARIA_ConfigurationGlobal::buildRequestChain("company", "asyncworksingle", $params);
     }
 
-    protected function getDisplayStructure()
+    protected function getDisplayStructure($params)
     {
         return "<table class=\"table\" id=\"" . $this->getContainerId() . "\">"
             . "<tr><th>Title</th><th>Year</th><th>Genre</th><th>Kind</th><th>Acted as</th></tr>"

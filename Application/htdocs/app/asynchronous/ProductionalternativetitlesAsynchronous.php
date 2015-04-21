@@ -12,7 +12,7 @@ class ProductionalternativetitlesAsynchronous extends ILARIA_ApplicationAsynchro
         return ILARIA_ConfigurationGlobal::buildRequestChain("production", "asyncalttitles", $params);
     }
 
-    protected function getDisplayStructure()
+    protected function getDisplayStructure($params)
     {
         return "<table class=\"table\" id=\"" . $this->getContainerId() . "\">"
             . "<tr><th>Title</th></tr>"

@@ -12,7 +12,7 @@ class SearchcompaniesbaseAsynchronous extends ILARIA_ApplicationAsynchronous
         return ILARIA_ConfigurationGlobal::buildRequestChain("search", "companiesbase", $params);
     }
 
-    protected function getDisplayStructure()
+    protected function getDisplayStructure($params)
     {
         return "<table class=\"table\" id=\"" . $this->getContainerId() . "\">"
             . "<tr><th>Name</th><th>Country</th><th>Produced</th><th>Distributed</th></tr>"

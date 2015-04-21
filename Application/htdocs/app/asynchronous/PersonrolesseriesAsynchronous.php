@@ -12,7 +12,7 @@ class PersonrolesseriesAsynchronous extends ILARIA_ApplicationAsynchronous
         return ILARIA_ConfigurationGlobal::buildRequestChain("person", "asyncrolesseries", $params);
     }
 
-    protected function getDisplayStructure()
+    protected function getDisplayStructure($params)
     {
         return "<table class=\"table\" id=\"" . $this->getContainerId() . "\">"
             . "<tr><th>Role</th><th>Character</th><th>Title</th><th>Years</th><th>Genre</th><th>Appearances</th></tr>"

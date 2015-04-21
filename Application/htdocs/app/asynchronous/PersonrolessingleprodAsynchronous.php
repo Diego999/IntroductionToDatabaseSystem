@@ -12,7 +12,7 @@ class PersonrolessingleprodAsynchronous extends ILARIA_ApplicationAsynchronous
         return ILARIA_ConfigurationGlobal::buildRequestChain("person", "asyncrolessingle", $params);
     }
 
-    protected function getDisplayStructure()
+    protected function getDisplayStructure($params)
     {
         return "<table class=\"table\" id=\"" . $this->getContainerId() . "\">"
             . "<tr><th>Role</th><th>Character</th><th>Title</th><th>Year</th><th>Genre</th><th>Kind</th></tr>"
