@@ -61,7 +61,7 @@ class ILARIA_ModuleFormbuilderForm
     public function getOnkeypress($tableName, $fieldName, $isUnique, $canEmpty)
     {
         $jsFunction = "form_check_" . $this->name . "('" . $tableName . "', '" . $fieldName . "'," . ($isUnique ? "true" : "false") . ", " . ($canEmpty ? "true" : "false") . ")";
-        return "oninput=\"" . $jsFunction . "\"";
+        return "oninput=\"" . $jsFunction . "\" onreset=\"" . $jsFunction . "\"";
     }
 
     public function getOnload($tableName, $fieldName, $isUnique, $canEmpty)
@@ -91,7 +91,7 @@ class ILARIA_ModuleFormbuilderForm
     {
         $result = array();
         $result[] = $this->getCheckScript();
-        $result[] = "<form class=\"form-horizontal\" action=\"" . $this->action . "\" method=\"" . $this->method . "\">";
+        $result[] = "<form class=\"form-horizontal\" action=\"" . $this->action . "\" method=\"" . $this->method . "\" id=\"" . $this->getName() . "\">";
         $result[] = "<input type=\"hidden\" id=\"" . $this->getName() . "_dataid" . "\" name=\"" . $this->getName() . "_dataid" . "\" value=\"" . ($this->dataId >= 0 ? $this->dataId : "") . "\" />";
         foreach ($this->components as $component)
         {
@@ -155,6 +155,9 @@ class ILARIA_ModuleFormbuilderForm
         $result[] = "div.addClass(\"has-error\");";
         $result[] = "}";
 
+        // Update button status
+        $result[] = "form_updatebutton_" . $this->name . "();";
+
         // End of AJAX request
         $result[] = "});";
 
@@ -168,9 +171,38 @@ class ILARIA_ModuleFormbuilderForm
         $result[] = "div.addClass(\"has-error\");";
         $result[] = "}";
 
+        // Update button status
+        $result[] = "form_updatebutton_" . $this->name . "();";
+
         $result[] = "}";
 
         // End of form_check_XXX
+        $result[] = "}";
+
+        // Function for updating button status
+        $result[] = "function form_updatebutton_" . $this->name . "() {";
+
+        // Get number of "has-error" things in the form
+        $result[] = "var count = $(\"#" . $this->getName() . " .has-error\").length;";
+
+        // Get submit button
+        $result[] = "var submitbtn = $(\"#" . $this->getName() . "_submit\");";
+
+        // If number > 0, disable button
+        $result[] = "if (count > 0) {";
+        $result[] = "submitbtn.removeClass(\"btn-success\");";
+        $result[] = "submitbtn.addClass(\"btn-danger\");";
+        $result[] = "submitbtn.attr(\"disabled\",\"disabled\");";
+        $result[] = "}";
+
+        // If number == 0, enable button
+        $result[] = "else {";
+        $result[] = "submitbtn.removeClass(\"btn-danger\");";
+        $result[] = "submitbtn.addClass(\"btn-success\");";
+        $result[] = "submitbtn.removeAttr(\"disabled\");";
+        $result[] = "}";
+
+        // End of form_updatebutton_XXX
         $result[] = "}";
 
         // End of script
@@ -275,7 +307,7 @@ class ILARIA_ModuleFormbuilderFieldInput extends ILARIA_ModuleFormbuilderField
     protected function displayField()
     {
         $result = array();
-        $result[] = "<input type=\"" . $this->type . "\" class=\"form-control\" id=\"" . $this->getName() . "\" name=\"" . $this->getName() . "\" placeholder=\"" . $this->placeholder . "\" value=\"" . $this->getFieldValue() . "\" " . $this->getOnKeyPress($this->tableName, $this->isUnique, $this->canEmpty) . " />";
+        $result[] = "<input type=\"" . $this->type . "\" class=\"form-control\" id=\"" . $this->getName() . "\" name=\"" . $this->getName() . "\" placeholder=\"" . $this->placeholder . "\" autocomplete=\"off\" value=\"" . $this->getFieldValue() . "\" " . $this->getOnKeyPress($this->tableName, $this->isUnique, $this->canEmpty) . " />";
         $result[] = $this->getOnLoad($this->tableName, $this->isUnique, $this->canEmpty);
         return implode("\n", $result);
     }
@@ -310,25 +342,31 @@ class ILARIA_ModuleFormbuilderFieldSelect extends ILARIA_ModuleFormbuilderField
 class ILARIA_ModuleFormbuilderButtons extends ILARIA_ModuleFormbuilderComponent
 {
     private $labelSubmit = '';
-    private $labelReset = '';
+    private $labelCancel = '';
+    private $targetCancel = '';
     private $marginLeft = 0;
-    private $width = 0;
+    private $widthLeft = 0;
+    private $widthRight = 0;
 
-    public function __construct($labelSubmit, $labelReset, $marginLeft, $width)
+    public function __construct($labelSubmit, $labelCancel, $targetCancel, $marginLeft, $widthLeft, $widthRight)
     {
-        parent::__construct("buttons");
+        parent::__construct("submit");
         $this->labelSubmit = $labelSubmit;
-        $this->labelReset = $labelReset;
+        $this->labelCancel = $labelCancel;
+        $this->targetCancel = $targetCancel;
         $this->marginLeft = $marginLeft;
-        $this->width = $width;
+        $this->widthLeft = $widthLeft;
+        $this->widthRight = $widthRight;
     }
 
     protected function displayComponent()
     {
         $result = array();
-        $result[] = "<div class=\"col-md-offset-" . $this->marginLeft . " col-md-" . $this->width . "\">";
-        $result[] = "<button type=\"reset\" class=\"btn btn-default\">" . $this->labelReset . "</button>";
-        $result[] = "<button type=\"submit\" class=\"btn btn-danger\">" . $this->labelSubmit . "</button>";
+        $result[] = "<div class=\"col-md-offset-" . $this->marginLeft . " col-md-" . $this->widthLeft . "\">";
+        $result[] = "<a class=\"btn btn-default\" role=\"button\" href=\"" . $this->targetCancel . "\">" . $this->labelCancel . "</a>";
+        $result[] = "</div>";
+        $result[] = "<div class=\"col-md-" . $this->widthRight . "\" style=\"text-align:right\">";
+        $result[] = "<button type=\"submit\" class=\"btn btn-default\" id=\"" . $this->getName() . "\">" . $this->labelSubmit . "</button>";
         $result[] = "</div>";
         return implode("\n", $result);
     }
