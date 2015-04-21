@@ -40,9 +40,9 @@ class ILARIA_ModuleMysql extends ILARIA_CoreModule
         $this->registerService(self::SERVICE_DATABASE_RELATIONAL);
 
         // Create log writer
-        $this->logWriter = NULL;
-        //$this->logWriter = new ILARIA_LogWriter(ILARIA_ConfigurationGlobal::LOG_OUTPUT_NONE);
-        //ILARIA_LogManager::getInstance()->registerWriter($this->logWriter, 'mod_Mysql');
+        //$this->logWriter = NULL;
+        $this->logWriter = new ILARIA_LogWriter(ILARIA_ConfigurationGlobal::LOG_OUTPUT_FILE_APPEND);
+        ILARIA_LogManager::getInstance()->registerWriter($this->logWriter, 'mod_Mysql');
 
         // Create error writer
         $this->errorWriter = new ILARIA_LogWriter(ILARIA_ConfigurationGlobal::LOG_OUTPUT_FILE_ERASE);

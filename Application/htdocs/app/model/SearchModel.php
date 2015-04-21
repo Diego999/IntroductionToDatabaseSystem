@@ -351,7 +351,7 @@ class SearchModel extends ILARIA_ApplicationModel
                 $sql .= ($first ? "" : " OR") . " NA_SEARCH.`lastname` COLLATE UTF8_GENERAL_CI LIKE \"%" . $nameElem . "%\"";
                 $first = false;
             }
-            $sql .= ") AND (";
+            $sql .= ") " . (count($nameArray) > 1 ? "AND" : "OR") . " (";
             $first = true;
             foreach ($nameArray as $nameElem)
             {

@@ -339,6 +339,32 @@ class ILARIA_ModuleFormbuilderFieldSelect extends ILARIA_ModuleFormbuilderField
     }
 }
 
+class ILARIA_ModuleFormbuilderFieldArea extends ILARIA_ModuleFormbuilderField
+{
+    private $placeholder = '';
+    private $isUnique = false;
+    private $canEmpty = false;
+    private $tableName = '';
+    private $rows = 0;
+
+    public function __construct($name, $label, $widthLabel, $widthField, $placeholder, $isUnique, $canEmpty, $tableName, $rows)
+    {
+        parent::__construct($name, $label, $widthLabel, $widthField);
+        $this->placeholder = $placeholder;
+        $this->isUnique = $isUnique;
+        $this->canEmpty = $canEmpty;
+        $this->tableName = $tableName;
+        $this->rows = $rows;
+    }
+
+    protected function displayField()
+    {
+        $result = array();
+        $result[] = "<textarea class=\"form-control\" id=\"" . $this->getName() . "\" name=\"" . $this->getName() . "\" placeholder=\"" . $this->placeholder . "\" autocomplete=\"off\" " . $this->getOnKeyPress($this->tableName, $this->isUnique, $this->canEmpty) . ">" . $this->getFieldValue() . "</textarea>";
+        return implode("\n", $result);
+    }
+}
+
 class ILARIA_ModuleFormbuilderButtons extends ILARIA_ModuleFormbuilderComponent
 {
     private $labelSubmit = '';

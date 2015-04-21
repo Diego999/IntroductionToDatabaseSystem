@@ -8,19 +8,40 @@ class PersondetailsView extends ILARIA_ApplicationView
         $this->output("<div class=\"row row-pad-top-20\">");
 
         // Person name
-        $this->output("<div class=\"col-md-10 col-md-offset-1\">");
+        $this->output("<div class=\"col-md-5 col-md-offset-1\">");
         $this->output("<h2>" . $data['infos']['firstname'] . " " . $data['infos']['lastname'] . "</h2>");
         $this->output("</div>");
+
+        // SCUD buttons
+        $this->output("<div class=\"col-md-5\" style=\"text-align:right\">");
+        $this->output("<a class=\"btn btn-danger btn-md\" href=\"" . ILARIA_ConfigurationGlobal::buildRequestChain("person", "update", array('id' => $data['infos']['id'])) . "\" role=\"button\"><span class=\"glyphicon glyphicon-pencil\" aria-hidden=\"true\"></span> update</a>");
+        $this->output("<a class=\"btn btn-danger btn-md\" href=\"#\" role=\"button\" " . ILARIA_ApplicationAsynchronous::getModalOnClickShow(ILARIA_ConfigurationGlobal::buildRequestChain('person', 'delete', array('id' => $data['infos']['id'])), false) . "><span class=\"glyphicon glyphicon-trash\" aria-hidden=\"true\"></span> delete</a>");
+        $this->output("</div>");
+
+        $this->output("</div>");
+        $this->output("<div class=\"row\">");
 
         // Begin left panel
         $this->output("<div class=\"col-md-3 col-md-offset-1\">");
 
         // Basic infos tab
         $this->output("<table class=\"table table-striped\">");
-        $this->output("<tr><td>Gender</td><td>" . ($data['infos']['gender'] == 'f' ? "Woman" : "Man") . "</td></tr>");
+        switch ($data['infos']['gender'])
+        {
+            case 'm':
+                $gender = "Man";
+                break;
+            case 'f':
+                $gender = "Woman";
+                break;
+            default:
+                $gender = "-";
+                break;
+        }
+        $this->output("<tr><td>Gender</td><td>" . $gender . "</td></tr>");
         $this->output("<tr><td>Birthdate</td><td>" . ($data['infos']['birthdate'] ? $data['infos']['birthdate'] : "-") . "</td></tr>");
         $this->output("<tr><td>Deathdate</td><td>" . ($data['infos']['deathdate'] ? $data['infos']['deathdate'] : "-") . "</td></tr>");
-        $this->output("<tr><td>Birthname</td><td>" . $data['infos']['birthname'] . "</td></tr>");
+        $this->output("<tr><td>Birthname</td><td>" . ($data['infos']['birthname'] ? $data['infos']['birthname'] : "-") . "</td></tr>");
         $this->output("<tr><td>Spouse</td><td>" . ($data['infos']['spouse'] ? $data['infos']['spouse'] : "-") . "</td></tr>");
         $this->output("<tr><td>Height</td><td>" . ($data['infos']['height'] ? $data['infos']['height'] . " m" : "-") . "</td></tr>");
         $this->output("</table>");
@@ -41,7 +62,7 @@ class PersondetailsView extends ILARIA_ApplicationView
         $this->output("<div class=\"panel-heading\">");
         $this->output("<h3 class=\"panel-title\">Trivia</h3>");
         $this->output("</div><div class=\"panel-body\">");
-        $this->output($data['infos']['trivia'] ? $data['infos']['trivia'] : "-");
+        $this->output($data['infos']['trivia'] ? nl2br($data['infos']['trivia']) : "-");
         $this->output("</div></div>");
 
         // Quotes
@@ -49,7 +70,7 @@ class PersondetailsView extends ILARIA_ApplicationView
         $this->output("<div class=\"panel-heading\">");
         $this->output("<h3 class=\"panel-title\">Quotes</h3>");
         $this->output("</div><div class=\"panel-body\">");
-        $this->output($data['infos']['quotes'] ? $data['infos']['quotes'] : "-");
+        $this->output($data['infos']['quotes'] ? nl2br($data['infos']['quotes']) : "-");
         $this->output("</div></div>");
 
         // Begin right panel
@@ -61,7 +82,7 @@ class PersondetailsView extends ILARIA_ApplicationView
         $this->output("<div class=\"panel-heading\">");
         $this->output("<h3 class=\"panel-title\">Biography</h3>");
         $this->output("</div><div class=\"panel-body\">");
-        $this->output($data['infos']['minibiography'] ? $data['infos']['minibiography'] : "-");
+        $this->output($data['infos']['minibiography'] ? nl2br($data['infos']['minibiography']) : "-");
         $this->output("</div></div>");
 
         // Movies

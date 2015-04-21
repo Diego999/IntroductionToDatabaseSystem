@@ -26,7 +26,8 @@ FROM
     LEFT JOIN `character` CH ON CA.`character_id` = CH.`id`
     INNER JOIN `role` RO ON CA.`role_id` = RO.`id`
 WHERE
-	CA.`person_id` = 2682115;
+	CA.`person_id` = 2682115
+ORDER BY PR.`year` DESC, TI.`title` ASC;
     
 -- gather roles of a person with particular ID in series (here 1831321 = Kiefer Sutherland)
 (
@@ -62,7 +63,8 @@ UNION DISTINCT
 	WHERE
 		CA.`person_id` = 1831321
 	GROUP BY PR_SER.`id`, RO.`name`, CH.`name`
-);
+)
+ORDER BY `prod_yearstart` DESC, `prod_title` ASC;
 
 -- gather the statistics about persons
 SELECT COUNT(DISTINCT `id`) AS `count_person`
