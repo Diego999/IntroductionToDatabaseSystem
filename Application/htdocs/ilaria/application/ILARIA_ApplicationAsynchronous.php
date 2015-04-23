@@ -93,6 +93,11 @@ abstract class ILARIA_ApplicationAsynchronous
         return "onclick=" . $quote . "modal_load_url('" . $url . "')" . $quote;
     }
 
+    public static function getModalFillFormButton($label, $formName, $fieldName, $id, $val)
+    {
+        return "<button type=\\\"button\\\" class=\\\"btn btn-default\\\" data-dismiss=\\\"modal\\\" onclick=\\\"form_search_f_" . $formName . "_" . $fieldName . "_set('" . $id . "','" . $val . "')\\\">" . $label . "</button>";
+    }
+
     public static function buildModalAjaxResponse($content)
     {
         // object begin

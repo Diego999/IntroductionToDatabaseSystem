@@ -339,6 +339,69 @@ class ILARIA_ModuleFormbuilderFieldSelect extends ILARIA_ModuleFormbuilderField
     }
 }
 
+class ILARIA_ModuleFormbuilderFieldSearch extends ILARIA_ModuleFormbuilderField
+{
+    private $placeholder = '';
+    private $searchController = '';
+    private $searchAction = '';
+
+    public function __construct($name, $label, $widthLabel, $widthField, $placeholder, $searchController, $searchAction)
+    {
+        parent::__construct($name, $label, $widthLabel, $widthField);
+        $this->placeholder = $placeholder;
+        $this->searchController = $searchController;
+        $this->searchAction = $searchAction;
+    }
+
+    protected function displayField()
+    {
+        $result = array();
+        $result[] = $this->buildScript();
+        $result[] = "<table>";
+        $result[] = "<tr><td colspan=\"2\">";
+        $result[] = "<input type=\"hidden\" id=\"" . $this->getName() . "_id\" name=\"" . $this->getName() . "_id\" value=\"" . (is_array($this->getFieldValue()) ? $this->getFieldValue()['id'] : "") . "\" />";
+        $result[] = "<input type=\"text\" class=\"form-control\" disabled=\"disabled\" id=\"" . $this->getName() . "_val\" name=\"" . $this->getName() . "_val\" value=\"" . (is_array($this->getFieldValue()) ? $this->getFieldValue()['val'] : "") . "\" />";
+        $result[] = "</td></tr><tr><td>";
+        $result[] = "<input type=\"text\" class=\"form-control\" id=\"" . $this->getName() . "_search\" placeholder=\"" . $this->placeholder . "\" autocomplete=\"off\" />";
+        $result[] = "</td><td>";
+        $result[] = "<a class=\"btn btn-default\" role=\"button\" onclick=\"form_search_" . $this->getName() . "()\">Search</a>";
+        $result[] = "</td></tr>";
+        $result[] = "</table>";
+        return implode("\n", $result);
+    }
+
+    private function buildScript()
+    {
+        $result = array();
+        $result[] = "<script type=\"text/javascript\">";
+
+        // Function for opening search window
+        $result[] = "function form_search_" . $this->getName() . "() {";
+
+        // Get search field value
+        $result[] = "var searchtext = $(\"#" . $this->getName() . "_search\").val();";
+
+        // Send ajax request
+        $result[] = "modal_load_url(\"/" . $this->searchController . "/" . $this->searchAction . "/val=\" + searchtext.replace(\" \",\"_\"));";
+
+        // End of form_search_XXX
+        $result[] = "}";
+
+        // Function for setting values
+        $result[] = "function form_search_" . $this->getName() . "_set(id,val) {";
+
+        // Set id and val
+        $result[] = "$(\"#" . $this->getName() . "_id\").val(id);";
+        $result[] = "$(\"#" . $this->getName() . "_val\").val(val);";
+
+        // End of form_search_XXX_set
+        $result[] = "}";
+
+        $result[] = "</script>";
+        return implode("\n", $result);
+    }
+}
+
 class ILARIA_ModuleFormbuilderFieldArea extends ILARIA_ModuleFormbuilderField
 {
     private $placeholder = '';

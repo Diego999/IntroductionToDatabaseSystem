@@ -394,6 +394,34 @@ class SingleproductionModel extends ILARIA_ApplicationModel implements ILARIA_Mo
                     }
                 }
 
+                // Delete corresponding casting rows
+                {
+                    $sql = "DELETE FROM `casting`"
+                        . " WHERE `production_id`=" . $id;
+                    $query = new ILARIA_DatabaseQuery($sql);
+                    $this->getDatabase()->exec($query);
+                    if ($query->getStatus() != 0)
+                    {
+                        throw new ILARIA_CoreError("Error in SingleproductionModel::delete : unable to delete subsequent casting records",
+                            ILARIA_CoreError::GEN_DB_QUERY_FAILED,
+                            ILARIA_CoreError::LEVEL_SERVER);
+                    }
+                }
+
+                // Delete corresponding productioncompany rows
+                {
+                    $sql = "DELETE FROM `productioncompany`"
+                        . " WHERE `production_id`=" . $id;
+                    $query = new ILARIA_DatabaseQuery($sql);
+                    $this->getDatabase()->exec($query);
+                    if ($query->getStatus() != 0)
+                    {
+                        throw new ILARIA_CoreError("Error in SingleproductionModel::delete : unable to delete subsequent productioncompany records",
+                            ILARIA_CoreError::GEN_DB_QUERY_FAILED,
+                            ILARIA_CoreError::LEVEL_SERVER);
+                    }
+                }
+
                 // Commit the transaction
                 if (!$this->getDatabase()->transactionCommit())
                 {

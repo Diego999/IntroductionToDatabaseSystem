@@ -541,6 +541,20 @@ class PersonModel extends ILARIA_ApplicationModel implements ILARIA_ModuleFormbu
                     }
                 }
 
+                // Delete subsequent casting records
+                {
+                    $sql = "DELETE FROM `casting`"
+                        . " WHERE `person_id`=" . $id;
+                    $query = new ILARIA_DatabaseQuery($sql);
+                    $this->getDatabase()->exec($query);
+                    if ($query->getStatus() != 0)
+                    {
+                        throw new ILARIA_CoreError("Error in PersonModel::delete : unable to delete subsequent casting records",
+                            ILARIA_CoreError::GEN_DB_QUERY_FAILED,
+                            ILARIA_CoreError::LEVEL_SERVER);
+                    }
+                }
+
                 // Commit the transaction
                 if (!$this->getDatabase()->transactionCommit())
                 {

@@ -376,7 +376,7 @@ class SerieModel extends ILARIA_ApplicationModel implements ILARIA_ModuleFormbui
                     }
                 }
 
-                // Delete singleproduction
+                // Delete serie
                 {
                     $sql = "DELETE FROM `serie`"
                         . " WHERE `id`=" . $id;
@@ -385,6 +385,34 @@ class SerieModel extends ILARIA_ApplicationModel implements ILARIA_ModuleFormbui
                     if ($query->getStatus() != 0)
                     {
                         throw new ILARIA_CoreError("Error in SerieModel::delete : unable to delete the serie",
+                            ILARIA_CoreError::GEN_DB_QUERY_FAILED,
+                            ILARIA_CoreError::LEVEL_SERVER);
+                    }
+                }
+
+                // Delete corresponding casting rows
+                {
+                    $sql = "DELETE FROM `casting`"
+                        . " WHERE `production_id`=" . $id;
+                    $query = new ILARIA_DatabaseQuery($sql);
+                    $this->getDatabase()->exec($query);
+                    if ($query->getStatus() != 0)
+                    {
+                        throw new ILARIA_CoreError("Error in SerieModel::delete : unable to delete subsequent casting records",
+                            ILARIA_CoreError::GEN_DB_QUERY_FAILED,
+                            ILARIA_CoreError::LEVEL_SERVER);
+                    }
+                }
+
+                // Delete corresponding productioncompany rows
+                {
+                    $sql = "DELETE FROM `productioncompany`"
+                        . " WHERE `production_id`=" . $id;
+                    $query = new ILARIA_DatabaseQuery($sql);
+                    $this->getDatabase()->exec($query);
+                    if ($query->getStatus() != 0)
+                    {
+                        throw new ILARIA_CoreError("Error in SerieModel::delete : unable to delete subsequent productioncompany records",
                             ILARIA_CoreError::GEN_DB_QUERY_FAILED,
                             ILARIA_CoreError::LEVEL_SERVER);
                     }
@@ -515,6 +543,48 @@ class SerieModel extends ILARIA_ApplicationModel implements ILARIA_ModuleFormbui
                             if ($query->getStatus() != 0)
                             {
                                 throw new ILARIA_CoreError("Error in SerieModel::delete : unable to delete subsequent episode's titles",
+                                    ILARIA_CoreError::GEN_DB_QUERY_FAILED,
+                                    ILARIA_CoreError::LEVEL_SERVER);
+                            }
+                        }
+
+                        // Delete episode's casting records
+                        {
+                            $sql = "DELETE FROM `casting`"
+                                . " WHERE `production_id` IN (";
+                            $first = true;
+                            foreach ($episodesList as $episode)
+                            {
+                                $sql .= ($first ? "" : ",") . $episode;
+                                $first = false;
+                            }
+                            $sql .= ")";
+                            $query = new ILARIA_DatabaseQuery($sql);
+                            $this->getDatabase()->exec($query);
+                            if ($query->getStatus() != 0)
+                            {
+                                throw new ILARIA_CoreError("Error in EpisodeModel::delete : unable to delete subsequent episode's casting records",
+                                    ILARIA_CoreError::GEN_DB_QUERY_FAILED,
+                                    ILARIA_CoreError::LEVEL_SERVER);
+                            }
+                        }
+
+                        // Delete episode's productioncompany records
+                        {
+                            $sql = "DELETE FROM `productioncompany`"
+                                . " WHERE `production_id` IN (";
+                            $first = true;
+                            foreach ($episodesList as $episode)
+                            {
+                                $sql .= ($first ? "" : ",") . $episode;
+                                $first = false;
+                            }
+                            $sql .= ")";
+                            $query = new ILARIA_DatabaseQuery($sql);
+                            $this->getDatabase()->exec($query);
+                            if ($query->getStatus() != 0)
+                            {
+                                throw new ILARIA_CoreError("Error in EpisodeModel::delete : unable to delete subsequent episode's productioncompany records",
                                     ILARIA_CoreError::GEN_DB_QUERY_FAILED,
                                     ILARIA_CoreError::LEVEL_SERVER);
                             }

@@ -267,7 +267,7 @@ class ProductionModel extends ILARIA_ApplicationModel
     {
         try
         {
-            $sql = "SELECT PE.`id` AS `person_id`, NA.`lastname` AS `person_lastname`, NA.`firstname` AS `person_firstname`, RO.`name` AS `role_name`, CH.`name` AS `char_name`"
+            $sql = "SELECT CA.`id` AS `casting_id`, PE.`id` AS `person_id`, NA.`lastname` AS `person_lastname`, NA.`firstname` AS `person_firstname`, RO.`name` AS `role_name`, CH.`name` AS `char_name`"
                 . " FROM `casting` CA"
                 . " INNER JOIN `person` PE ON CA.`person_id` = PE.`id`"
                 . " INNER JOIN `name` NA ON PE.`name_id` = NA.`id`"
