@@ -1,6 +1,6 @@
 <?php
 
-class SingleproductionModel extends ILARIA_ApplicationModel implements ILARIA_ModuleFormbuilderFieldGetterModel
+class SerieModel extends ILARIA_ApplicationModel implements ILARIA_ModuleFormbuilderFieldGetterModel
 {
     protected function getDbIdentifier() { return 'app'; }
 
@@ -19,22 +19,17 @@ class SingleproductionModel extends ILARIA_ApplicationModel implements ILARIA_Mo
                     . " INNER JOIN `production` PR ON TI.`id` = PR.`title_id`"
                     . " WHERE PR.`id`=" . $id;
                 break;
-            case 'year':
-                $sql = "SELECT PR.`" . $fieldName . "`"
-                    . " FROM `production` PR"
-                    . " WHERE PR.`id`=" . $id;
+            case 'yearstart':
+            case 'yearend':
+                $sql = "SELECT SE.`" . $fieldName . "`"
+                    . " FROM `serie` SE"
+                    . " WHERE SE.`id`=" . $id;
                 break;
             case 'gender':
                 $fieldName .= '_id';
                 $sql = "SELECT PR.`" . $fieldName . "`"
                     . " FROM `production` PR"
                     . " WHERE PR.`id`=" . $id;
-                break;
-            case 'kind':
-                $fieldName .= '_id';
-                $sql = "SELECT SP.`" . $fieldName . "`"
-                    . " FROM `singleproduction` SP"
-                    . " WHERE SP.`id`=" . $id;
                 break;
             default:
                 break;
@@ -57,7 +52,7 @@ class SingleproductionModel extends ILARIA_ApplicationModel implements ILARIA_Mo
             }
             else
             {
-                throw new ILARIA_CoreError("Error in SingleproductionModel::getFieldContent : request returned status " . $query->getStatus(),
+                throw new ILARIA_CoreError("Error in SerieModel::getFieldContent : request returned status " . $query->getStatus(),
                     ILARIA_CoreError::GEN_DB_QUERY_FAILED,
                     ILARIA_CoreError::LEVEL_SERVER);
             }
@@ -70,7 +65,7 @@ class SingleproductionModel extends ILARIA_ApplicationModel implements ILARIA_Mo
     }
 
     // SCUD operation
-    public function insert($title, $year, $kind, $gender)
+    public function insert($title, $yearstart, $yearend, $gender)
     {
         // Result
         $result = 0;
@@ -87,7 +82,7 @@ class SingleproductionModel extends ILARIA_ApplicationModel implements ILARIA_Mo
                 $this->getDatabase()->exec($query);
                 if ($query->getStatus() != 0)
                 {
-                    throw new ILARIA_CoreError("Error in SingleproductionModel::insert : unable to disable foreign keys check",
+                    throw new ILARIA_CoreError("Error in SerieModel::insert : unable to disable foreign keys check",
                         ILARIA_CoreError::GEN_DB_QUERY_FAILED,
                         ILARIA_CoreError::LEVEL_SERVER);
                 }
@@ -102,7 +97,7 @@ class SingleproductionModel extends ILARIA_ApplicationModel implements ILARIA_Mo
                 // Start the transaction
                 if (!$this->getDatabase()->transactionBegin())
                 {
-                    throw new ILARIA_CoreError("Error in Singleproduction::insert : unable to start a new transaction",
+                    throw new ILARIA_CoreError("Error in SerieModel::insert : unable to start a new transaction",
                         ILARIA_CoreError::GEN_DB_QUERY_FAILED,
                         ILARIA_CoreError::LEVEL_SERVER);
                 }
@@ -110,14 +105,14 @@ class SingleproductionModel extends ILARIA_ApplicationModel implements ILARIA_Mo
                 // Insert production, invalid pointer at main title yet
                 {
                     $sql = "INSERT INTO `production`(`year`,`gender_id`,`title_id`) VALUES ("
-                        . $this->quoteOrNull($year) . ","
+                        . "NULL" . ","
                         . ($gender == "u" ? "NULL" : $gender) . ","
                         . "0" . ")";
                     $query = new ILARIA_DatabaseQuery($sql);
                     $this->getDatabase()->exec($query);
                     if ($query->getStatus() != 0)
                     {
-                        throw new ILARIA_CoreError("Error in Singleproduction::insert : unable to insert the production",
+                        throw new ILARIA_CoreError("Error in SerieModel::insert : unable to insert the production",
                             ILARIA_CoreError::GEN_DB_QUERY_FAILED,
                             ILARIA_CoreError::LEVEL_SERVER);
                     }
@@ -133,7 +128,7 @@ class SingleproductionModel extends ILARIA_ApplicationModel implements ILARIA_Mo
                     $this->getDatabase()->exec($query);
                     if ($query->getStatus() != 0)
                     {
-                        throw new ILARIA_CoreError("Error in Singleproduction::insert : unable to insert the main title",
+                        throw new ILARIA_CoreError("Error in SerieModel::insert : unable to insert the main title",
                             ILARIA_CoreError::GEN_DB_QUERY_FAILED,
                             ILARIA_CoreError::LEVEL_SERVER);
                     }
@@ -149,22 +144,23 @@ class SingleproductionModel extends ILARIA_ApplicationModel implements ILARIA_Mo
                     $this->getDatabase()->exec($query);
                     if ($query->getStatus() != 0)
                     {
-                        throw new ILARIA_CoreError("Error in Singleproduction::insert : unable to link production to its main title",
+                        throw new ILARIA_CoreError("Error in SerieModel::insert : unable to link production to its main title",
                             ILARIA_CoreError::GEN_DB_QUERY_FAILED,
                             ILARIA_CoreError::LEVEL_SERVER);
                     }
                 }
 
-                // Insert singleproduction ISA child
+                // Insert serie ISA child
                 {
-                    $sql = "INSERT INTO `singleproduction`(`id`,`kind_id`) VALUES ("
+                    $sql = "INSERT INTO `serie`(`id`,`yearstart`,`yearend`) VALUES ("
                         . $productionId . ","
-                        . $kind . ")";
+                        . $this->quoteOrNull($yearstart) . ","
+                        . $this->quoteOrNull($yearend) . ")";
                     $query = new ILARIA_DatabaseQuery($sql);
                     $this->getDatabase()->exec($query);
                     if ($query->getStatus() != 0)
                     {
-                        throw new ILARIA_CoreError("Error in Singleproduction::insert : unable to insert the ISA singleproduction child",
+                        throw new ILARIA_CoreError("Error in SerieModel::insert : unable to insert the ISA serie child",
                             ILARIA_CoreError::GEN_DB_QUERY_FAILED,
                             ILARIA_CoreError::LEVEL_SERVER);
                     }
@@ -173,7 +169,7 @@ class SingleproductionModel extends ILARIA_ApplicationModel implements ILARIA_Mo
                 // Commit the transaction
                 if (!$this->getDatabase()->transactionCommit())
                 {
-                    throw new ILARIA_CoreError("Error in Singleproduction::insert : unable to commit the transaction",
+                    throw new ILARIA_CoreError("Error in SerieModel::insert : unable to commit the transaction",
                         ILARIA_CoreError::GEN_DB_QUERY_FAILED,
                         ILARIA_CoreError::LEVEL_SERVER);
                 }
@@ -195,7 +191,7 @@ class SingleproductionModel extends ILARIA_ApplicationModel implements ILARIA_Mo
                 $this->getDatabase()->exec($query);
                 if ($query->getStatus() != 0)
                 {
-                    throw new ILARIA_CoreError("Error in Singleproduction::insert : unable to re-enable foreign keys check",
+                    throw new ILARIA_CoreError("Error in SerieModel::insert : unable to re-enable foreign keys check",
                         ILARIA_CoreError::GEN_DB_QUERY_FAILED,
                         ILARIA_CoreError::LEVEL_SERVER);
                 }
@@ -215,7 +211,7 @@ class SingleproductionModel extends ILARIA_ApplicationModel implements ILARIA_Mo
     }
 
     // SCUD operation
-    public function update($id, $title, $year, $kind, $gender)
+    public function update($id, $title, $yearstart, $yearend, $gender)
     {
         // Result
         $result = 0;
@@ -228,7 +224,7 @@ class SingleproductionModel extends ILARIA_ApplicationModel implements ILARIA_Mo
             // Start the transaction
             if (!$this->getDatabase()->transactionBegin())
             {
-                throw new ILARIA_CoreError("Error in Singleproduction::update : unable to start a new transaction",
+                throw new ILARIA_CoreError("Error in SerieModel::update : unable to start a new transaction",
                     ILARIA_CoreError::GEN_DB_QUERY_FAILED,
                     ILARIA_CoreError::LEVEL_SERVER);
             }
@@ -236,14 +232,13 @@ class SingleproductionModel extends ILARIA_ApplicationModel implements ILARIA_Mo
             // Update production
             {
                 $sql = "UPDATE `production` SET"
-                    . " `year`=" . $this->quoteOrNull($year) . ","
                     . " `gender_id`=" . ($gender == "u" ? "NULL" : $gender)
                     . " WHERE `id`=" . $id;
                 $query = new ILARIA_DatabaseQuery($sql);
                 $this->getDatabase()->exec($query);
                 if ($query->getStatus() != 0)
                 {
-                    throw new ILARIA_CoreError("Error in SingleproductionModel::update : unable to update production record",
+                    throw new ILARIA_CoreError("Error in SerieModel::update : unable to update production record",
                         ILARIA_CoreError::GEN_DB_QUERY_FAILED,
                         ILARIA_CoreError::LEVEL_SERVER);
                 }
@@ -259,7 +254,7 @@ class SingleproductionModel extends ILARIA_ApplicationModel implements ILARIA_Mo
                 $this->getDatabase()->query($query);
                 if ($query->getStatus() != 0 || $query->getCount() != 1)
                 {
-                    throw new ILARIA_CoreError("Error in SingleproductionModel::update : unable to find production's main title id",
+                    throw new ILARIA_CoreError("Error in SerieModel::update : unable to find production's main title id",
                         ILARIA_CoreError::GEN_DB_QUERY_FAILED,
                         ILARIA_CoreError::LEVEL_SERVER);
                 }
@@ -275,22 +270,23 @@ class SingleproductionModel extends ILARIA_ApplicationModel implements ILARIA_Mo
                 $this->getDatabase()->exec($query);
                 if ($query->getStatus() != 0)
                 {
-                    throw new ILARIA_CoreError("Error in SingleproductionModel::update : unable to update main title record",
+                    throw new ILARIA_CoreError("Error in SerieModel::update : unable to update main title record",
                         ILARIA_CoreError::GEN_DB_QUERY_FAILED,
                         ILARIA_CoreError::LEVEL_SERVER);
                 }
             }
 
-            // Update singleproduction
+            // Update serie
             {
-                $sql = "UPDATE `singleproduction` SET"
-                    . " `kind_id`=" . $kind
+                $sql = "UPDATE `serie` SET"
+                    . " `yearstart`=" . $this->quoteOrNull($yearstart) . ","
+                    . " `yearend`=" . $this->quoteOrNull($yearend)
                     . " WHERE `id`=" . $id;
                 $query = new ILARIA_DatabaseQuery($sql);
                 $this->getDatabase()->exec($query);
                 if ($query->getStatus() != 0)
                 {
-                    throw new ILARIA_CoreError("Error in SingleproductionModel::update : unable to update singleproduction record",
+                    throw new ILARIA_CoreError("Error in SerieModel::update : unable to update serie record",
                         ILARIA_CoreError::GEN_DB_QUERY_FAILED,
                         ILARIA_CoreError::LEVEL_SERVER);
                 }
@@ -299,7 +295,7 @@ class SingleproductionModel extends ILARIA_ApplicationModel implements ILARIA_Mo
             // Commit the transaction
             if (!$this->getDatabase()->transactionCommit())
             {
-                throw new ILARIA_CoreError("Error in Singleproduction::update : unable to commit the transaction",
+                throw new ILARIA_CoreError("Error in SerieModel::update : unable to commit the transaction",
                     ILARIA_CoreError::GEN_DB_QUERY_FAILED,
                     ILARIA_CoreError::LEVEL_SERVER);
             }
@@ -336,7 +332,7 @@ class SingleproductionModel extends ILARIA_ApplicationModel implements ILARIA_Mo
                 $this->getDatabase()->exec($query);
                 if ($query->getStatus() != 0)
                 {
-                    throw new ILARIA_CoreError("Error in SingleproductionModel::delete : unable to disable foreign keys check",
+                    throw new ILARIA_CoreError("Error in SerieModel::delete : unable to disable foreign keys check",
                         ILARIA_CoreError::GEN_DB_QUERY_FAILED,
                         ILARIA_CoreError::LEVEL_SERVER);
                 }
@@ -347,7 +343,7 @@ class SingleproductionModel extends ILARIA_ApplicationModel implements ILARIA_Mo
                 // Start the transaction
                 if (!$this->getDatabase()->transactionBegin())
                 {
-                    throw new ILARIA_CoreError("Error in SingleproductionModel::delete : unable to start a new transaction",
+                    throw new ILARIA_CoreError("Error in SerieModel::delete : unable to start a new transaction",
                         ILARIA_CoreError::GEN_DB_QUERY_FAILED,
                         ILARIA_CoreError::LEVEL_SERVER);
                 }
@@ -360,7 +356,7 @@ class SingleproductionModel extends ILARIA_ApplicationModel implements ILARIA_Mo
                     $this->getDatabase()->exec($query);
                     if ($query->getStatus() != 0)
                     {
-                        throw new ILARIA_CoreError("Error in SingleproductionModel::delete : unable to delete production's titles",
+                        throw new ILARIA_CoreError("Error in SerieModel::delete : unable to delete production's titles",
                             ILARIA_CoreError::GEN_DB_QUERY_FAILED,
                             ILARIA_CoreError::LEVEL_SERVER);
                     }
@@ -374,7 +370,7 @@ class SingleproductionModel extends ILARIA_ApplicationModel implements ILARIA_Mo
                     $this->getDatabase()->exec($query);
                     if ($query->getStatus() != 0)
                     {
-                        throw new ILARIA_CoreError("Error in SingleproductionModel::delete : unable to delete the production",
+                        throw new ILARIA_CoreError("Error in SerieModel::delete : unable to delete the production",
                             ILARIA_CoreError::GEN_DB_QUERY_FAILED,
                             ILARIA_CoreError::LEVEL_SERVER);
                     }
@@ -382,22 +378,154 @@ class SingleproductionModel extends ILARIA_ApplicationModel implements ILARIA_Mo
 
                 // Delete singleproduction
                 {
-                    $sql = "DELETE FROM `singleproduction`"
+                    $sql = "DELETE FROM `serie`"
                         . " WHERE `id`=" . $id;
                     $query = new ILARIA_DatabaseQuery($sql);
                     $this->getDatabase()->exec($query);
                     if ($query->getStatus() != 0)
                     {
-                        throw new ILARIA_CoreError("Error in SingleproductionModel::delete : unable to delete the singleproduction",
+                        throw new ILARIA_CoreError("Error in SerieModel::delete : unable to delete the serie",
                             ILARIA_CoreError::GEN_DB_QUERY_FAILED,
                             ILARIA_CoreError::LEVEL_SERVER);
+                    }
+                }
+
+                // Select corresponding seasons
+                $seasonsList = array();
+                {
+                    $sql = "SELECT SEA.`id`"
+                        . " FROM `season` SEA"
+                        . " WHERE SEA.`serie_id`=" . $id;
+                    $query = new ILARIA_DatabaseQuery($sql);
+                    $this->getDatabase()->query($query);
+                    if ($query->getStatus() != 0)
+                    {
+                        throw new ILARIA_CoreError("Error in SerieModel::delete : unable to find subsequent seasons",
+                            ILARIA_CoreError::GEN_DB_QUERY_FAILED,
+                            ILARIA_CoreError::LEVEL_SERVER);
+                    }
+                    foreach ($query->getData() as $season)
+                    {
+                        $seasonsList[] = $season['id'];
+                    }
+                }
+
+                // Next happen only if there are seasons
+                if (count($seasonsList) > 0)
+                {
+                    // Delete seasons
+                    {
+                        $sql = "DELETE FROM `season`"
+                            . " WHERE `serie_id`=" . $id;
+                        $query = new ILARIA_DatabaseQuery($sql);
+                        $this->getDatabase()->exec($query);
+                        if ($query->getStatus() != 0)
+                        {
+                            throw new ILARIA_CoreError("Error in SerieModel::delete : unable to delete subsequent seasons",
+                                ILARIA_CoreError::GEN_DB_QUERY_FAILED,
+                                ILARIA_CoreError::LEVEL_SERVER);
+                        }
+                    }
+
+                    // Select corresponding episodes
+                    $episodesList = array();
+                    {
+                        $sql = "SELECT EP.`id`"
+                            . " FROM `episode` EP"
+                            . " WHERE EP.`season_id` IN (";
+                        $first = true;
+                        foreach ($seasonsList as $season)
+                        {
+                            $sql .= ($first ? "" : ",") . $season;
+                            $first = false;
+                        }
+                        $sql .= ")";
+                        $query = new ILARIA_DatabaseQuery($sql);
+                        $this->getDatabase()->query($query);
+                        if ($query->getStatus() != 0)
+                        {
+                            throw new ILARIA_CoreError("Error in SerieModel::delete : unable to find subsequent episodes",
+                                ILARIA_CoreError::GEN_DB_QUERY_FAILED,
+                                ILARIA_CoreError::LEVEL_SERVER);
+                        }
+                        foreach ($query->getData() as $episode)
+                        {
+                            $episodesList[] = $episode['id'];
+                        }
+                    }
+
+                    // Next happen only if there are episodes
+                    if (count($episodesList) > 0)
+                    {
+                        // Delete episodes
+                        {
+                            $sql = "DELETE FROM `episode`"
+                                . " WHERE `season_id` IN (";
+                            $first = true;
+                            foreach ($seasonsList as $season)
+                            {
+                                $sql .= ($first ? "" : ",") . $season;
+                                $first = false;
+                            }
+                            $sql .= ")";
+                            $query = new ILARIA_DatabaseQuery($sql);
+                            $this->getDatabase()->exec($query);
+                            if ($query->getStatus() != 0)
+                            {
+                                throw new ILARIA_CoreError("Error in SerieModel::delete : unable to delete subsequent episodes",
+                                    ILARIA_CoreError::GEN_DB_QUERY_FAILED,
+                                    ILARIA_CoreError::LEVEL_SERVER);
+                            }
+                        }
+
+                        // Delete episode's productions
+                        {
+                            $sql = "DELETE FROM `production`"
+                                . " WHERE `id` IN (";
+                            $first = true;
+                            foreach ($episodesList as $episode)
+                            {
+                                $sql .= ($first ? "" : ",") . $episode;
+                                $first = false;
+                            }
+                            $sql .= ")";
+                            $query = new ILARIA_DatabaseQuery($sql);
+                            $this->getDatabase()->exec($query);
+                            if ($query->getStatus() != 0)
+                            {
+                                throw new ILARIA_CoreError("Error in SerieModel::delete : unable to delete subsequent episode's productions",
+                                    ILARIA_CoreError::GEN_DB_QUERY_FAILED,
+                                    ILARIA_CoreError::LEVEL_SERVER);
+                            }
+                        }
+
+                        // Delete episode's titles
+                        {
+                            $sql = "DELETE FROM `title`"
+                                . " WHERE `production_id` IN (";
+                            $first = true;
+                            foreach ($episodesList as $episode)
+                            {
+                                $sql .= ($first ? "" : ",") . $episode;
+                                $first = false;
+                            }
+                            $sql .= ")";
+                            $query = new ILARIA_DatabaseQuery($sql);
+                            $this->getDatabase()->exec($query);
+                            if ($query->getStatus() != 0)
+                            {
+                                throw new ILARIA_CoreError("Error in SerieModel::delete : unable to delete subsequent episode's titles",
+                                    ILARIA_CoreError::GEN_DB_QUERY_FAILED,
+                                    ILARIA_CoreError::LEVEL_SERVER);
+                            }
+                        }
                     }
                 }
 
                 // Commit the transaction
                 if (!$this->getDatabase()->transactionCommit())
                 {
-                    throw new ILARIA_CoreError("Error in SingleproductionModel::delete : unable to commit the transaction",
+                    throw new ILARIA_CoreError("Error in SerieModel::delete : unable to commit the transaction",
                         ILARIA_CoreError::GEN_DB_QUERY_FAILED,
                         ILARIA_CoreError::LEVEL_SERVER);
                 }
@@ -464,43 +592,7 @@ class SingleproductionModel extends ILARIA_ApplicationModel implements ILARIA_Mo
             }
             else
             {
-                throw new ILARIA_CoreError("Error in SingleproductionModel::getListGenders : request returned status " . $query->getStatus(),
-                    ILARIA_CoreError::GEN_DB_QUERY_FAILED,
-                    ILARIA_CoreError::LEVEL_SERVER);
-            }
-        }
-        catch (ILARIA_CoreError $e)
-        {
-            $e->writeToLog();
-            throw $e;
-        }
-    }
-
-    // List publication
-    public function getListKinds()
-    {
-        try
-        {
-            $sql = "SELECT KI.`id`, KI.`name`"
-                . " FROM `kind` KI"
-                . " ORDER BY KI.`name` ASC";
-            $query = new ILARIA_DatabaseQuery($sql);
-            $this->getDatabase()->query($query);
-            if ($query->getStatus() == 0)
-            {
-                $list = array();
-                foreach ($query->getData() as $kind)
-                {
-                    $list[] = array(
-                        ILARIA_ModuleFormbuilderFieldSelect::ELEM_KEY => $kind['id'],
-                        ILARIA_ModuleFormbuilderFieldSelect::ELEM_VAL => $kind['name'],
-                    );
-                }
-                return $list;
-            }
-            else
-            {
-                throw new ILARIA_CoreError("Error in SingleproductionModel::getListKinds : request returned status " . $query->getStatus(),
+                throw new ILARIA_CoreError("Error in SerieModel::getListGenders : request returned status " . $query->getStatus(),
                     ILARIA_CoreError::GEN_DB_QUERY_FAILED,
                     ILARIA_CoreError::LEVEL_SERVER);
             }

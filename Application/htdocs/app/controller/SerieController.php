@@ -1,8 +1,8 @@
 <?php
 
-class SingleproductionController extends ILARIA_ApplicationController
+class SerieController extends ILARIA_ApplicationController
 {
-    const FORM_NAME = 'singleproduction';
+    const FORM_NAME = 'serie';
 
     public function isAuthorized($actionName, $userToken)
     {
@@ -22,10 +22,10 @@ class SingleproductionController extends ILARIA_ApplicationController
     public function action_insert($request)
     {
         // Instanciate model
-        $model = $this->getModel("singleproduction");
+        $model = $this->getModel("serie");
 
         // Instanciate view
-        $view = $this->getView("singleproductionform");
+        $view = $this->getView("serieform");
         $view->setTemplateName('frontend');
 
         // Create menu
@@ -38,23 +38,23 @@ class SingleproductionController extends ILARIA_ApplicationController
         {
             // Gather values
             $title = ILARIA_SecurityManager::in($request->getPostArg("f_" . self::FORM_NAME . "_title"));
-            $year = ILARIA_SecurityManager::in($request->getPostArg("f_" . self::FORM_NAME . "_year"));
+            $yearstart = ILARIA_SecurityManager::in($request->getPostArg("f_" . self::FORM_NAME . "_yearstart"));
+            $yearend = ILARIA_SecurityManager::in($request->getPostArg("f_" . self::FORM_NAME . "_yearend"));
             $gender = ILARIA_SecurityManager::in($request->getPostArg("f_" . self::FORM_NAME . "_gender"));
-            $kind = ILARIA_SecurityManager::in($request->getPostArg("f_" . self::FORM_NAME . "_kind"));
 
             // Insert values
-            if (($id = $model->insert($title, $year, $kind, $gender)) >= 0)
+            if (($id = $model->insert($title, $yearstart, $yearend, $gender)) >= 0)
             {
                 // Load other controller, launch action and gather back view
                 $controller = ILARIA_CoreLoader::getInstance()->loadController("production");
                 $view = $controller->action_details(new ILARIA_CoreRequest(ILARIA_ConfigurationGlobal::buildRequestChain("production", "details", array('id' => $id))));
-                $view->addAlert(ILARIA_ApplicationView::ALERT_TYPE_SUCCESS, "The single production \"" . $title . "\" was successfully inserted");
+                $view->addAlert(ILARIA_ApplicationView::ALERT_TYPE_SUCCESS, "The serie \"" . $title . "\" was successfully inserted");
                 return $view;
             }
             else
             {
                 // Register error
-                $view->addAlert(ILARIA_ApplicationView::ALERT_TYPE_DANGER, "The single production \"" . $title . "\" was not inserted");
+                $view->addAlert(ILARIA_ApplicationView::ALERT_TYPE_DANGER, "The serie \"" . $title . "\" was not inserted");
             }
         }
 
@@ -63,7 +63,6 @@ class SingleproductionController extends ILARIA_ApplicationController
             'model' => $model,
             'action' => 'insert',
             'genders' => $model->getListGenders(),
-            'kinds' => $model->getListKinds(),
         ));
 
         // Return view
@@ -73,10 +72,10 @@ class SingleproductionController extends ILARIA_ApplicationController
     public function action_update($request)
     {
         // Instanciate model
-        $model = $this->getModel("singleproduction");
+        $model = $this->getModel("serie");
 
         // Instanciate view
-        $view = $this->getView("singleproductionform");
+        $view = $this->getView("serieform");
         $view->setTemplateName('frontend');
 
         // Create menu
@@ -96,23 +95,23 @@ class SingleproductionController extends ILARIA_ApplicationController
             // Gather values
             $id = ILARIA_SecurityManager::in($request->getPostArg("f_" . self::FORM_NAME . "_dataid"));
             $title = ILARIA_SecurityManager::in($request->getPostArg("f_" . self::FORM_NAME . "_title"));
-            $year = ILARIA_SecurityManager::in($request->getPostArg("f_" . self::FORM_NAME . "_year"));
+            $yearstart = ILARIA_SecurityManager::in($request->getPostArg("f_" . self::FORM_NAME . "_yearstart"));
+            $yearend = ILARIA_SecurityManager::in($request->getPostArg("f_" . self::FORM_NAME . "_yearend"));
             $gender = ILARIA_SecurityManager::in($request->getPostArg("f_" . self::FORM_NAME . "_gender"));
-            $kind = ILARIA_SecurityManager::in($request->getPostArg("f_" . self::FORM_NAME . "_kind"));
 
             // Update values
-            if ($model->update($id, $title, $year, $kind, $gender) == 0)
+            if ($model->update($id, $title, $yearstart, $yearend, $gender) == 0)
             {
                 // Load other controller, launch action and gather back view
                 $controller = ILARIA_CoreLoader::getInstance()->loadController("production");
                 $view = $controller->action_details(new ILARIA_CoreRequest(ILARIA_ConfigurationGlobal::buildRequestChain("production", "details", array('id' => $id))));
-                $view->addAlert(ILARIA_ApplicationView::ALERT_TYPE_SUCCESS, "The single production \"" . $title . "\" was successfully updated");
+                $view->addAlert(ILARIA_ApplicationView::ALERT_TYPE_SUCCESS, "The serie \"" . $title . "\" was successfully updated");
                 return $view;
             }
             else
             {
                 // Register error
-                $view->addAlert(ILARIA_ApplicationView::ALERT_TYPE_DANGER, "The single production \"" . $title . "\" was not updated");
+                $view->addAlert(ILARIA_ApplicationView::ALERT_TYPE_DANGER, "The serie \"" . $title . "\" was not updated");
             }
         }
 
@@ -121,7 +120,6 @@ class SingleproductionController extends ILARIA_ApplicationController
             'model' => $model,
             'action' => 'update',
             'genders' => $model->getListGenders(),
-            'kinds' => $model->getListKinds(),
             'id' => $id,
         ));
 
@@ -132,7 +130,7 @@ class SingleproductionController extends ILARIA_ApplicationController
     public function action_delete($request)
     {
         // Instanciate model
-        $model = $this->getModel("singleproduction");
+        $model = $this->getModel("serie");
 
         // Get ID
         $id = $request->getGetArg('id');
@@ -149,14 +147,14 @@ class SingleproductionController extends ILARIA_ApplicationController
                 // Load other controller, launch action and gather back view
                 $controller = ILARIA_CoreLoader::getInstance()->loadController("directaccess");
                 $view = $controller->action_productions(NULL);
-                $view->addAlert(ILARIA_ApplicationView::ALERT_TYPE_SUCCESS, "The single production \"" . $title . "\" was successfully deleted");
+                $view->addAlert(ILARIA_ApplicationView::ALERT_TYPE_SUCCESS, "The serie \"" . $title . "\" was successfully deleted");
             }
             else
             {
                 // Load other controller, launch action and gather back view
                 $controller = ILARIA_CoreLoader::getInstance()->loadController("production");
                 $view = $controller->action_details(new ILARIA_CoreRequest(ILARIA_ConfigurationGlobal::buildRequestChain("production", "details", array('id' => $id))));
-                $view->addAlert(ILARIA_ApplicationView::ALERT_TYPE_DANGER, "The single production \"" . $title . "\" failed to be deleted");
+                $view->addAlert(ILARIA_ApplicationView::ALERT_TYPE_DANGER, "The serie \"" . $title . "\" failed to be deleted");
             }
 
             // Return view
@@ -167,7 +165,7 @@ class SingleproductionController extends ILARIA_ApplicationController
         else
         {
             // Create view
-            $view = "<p>The single production \\\"" . $title . "\\\" will be deleted. Are you sure ?</p>";
+            $view = "<p>The serie \\\"" . $title . "\\\" and all its related seasons and episodes will be deleted. Are you sure ?</p>";
 
             // Create title
             $title = "Confirmation required";
@@ -185,7 +183,7 @@ class SingleproductionController extends ILARIA_ApplicationController
                         ILARIA_ApplicationAsynchronous::MODAL_BUTTON_STYLE => "danger",
                         ILARIA_ApplicationAsynchronous::MODAL_BUTTON_TITLE => "Delete",
                         ILARIA_ApplicationAsynchronous::MODAL_BUTTON_ACTION => ILARIA_ApplicationAsynchronous::MODAL_ACTION_LINK,
-                        ILARIA_ApplicationAsynchronous::MODAL_BUTTON_LINK => ILARIA_ConfigurationGlobal::buildRequestChain("singleproduction", "delete", array(
+                        ILARIA_ApplicationAsynchronous::MODAL_BUTTON_LINK => ILARIA_ConfigurationGlobal::buildRequestChain("serie", "delete", array(
                             'id' => $id,
                             'confirm' => 'confirm',
                         )),
