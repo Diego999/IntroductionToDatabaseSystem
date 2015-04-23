@@ -15,8 +15,9 @@ class ProductionalternativetitlesAsynchronous extends ILARIA_ApplicationAsynchro
     protected function getDisplayStructure($params)
     {
         return "<table class=\"table\" id=\"" . $this->getContainerId() . "\">"
-            . "<tr><th>Title</th></tr>"
-            . "<tr id=\"" . $this->getLoadingId() . "\"><td colspan=\"1\" style=\"text-align:center\">" . $this->getLoadingGif() . "</td></tr>"
+            . "<tr class=\"insertor\"><td colspan=\"3\"><a class=\"btn btn-danger btn-sm\" href=\"" . ILARIA_ConfigurationGlobal::buildRequestChain("production", "insertalttitle", array('production_id' => $params['prod_id'])) . "\" role=\"button\"><span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span> insert</a></td></tr>"
+            . "<tr><th>Title</th><th></th><th></th></tr>"
+            . "<tr id=\"" . $this->getLoadingId() . "\"><td colspan=\"3\" style=\"text-align:center\">" . $this->getLoadingGif() . "</td></tr>"
             . "</table>";
     }
 
@@ -24,13 +25,15 @@ class ProductionalternativetitlesAsynchronous extends ILARIA_ApplicationAsynchro
     {
         return "<tr class=\\\"" . $this->getElementClass() . "\\\">"
             . "<td>:title</td>"
+            . "<td><a class=\\\"btn btn-danger btn-xs\\\" href=\\\"" . ILARIA_ConfigurationGlobal::buildRequestChain("production", "updatealttitle", array('id' => ':id')) . "\\\" role=\\\"button\\\"><span class=\\\"glyphicon glyphicon-pencil\\\" aria-hidden=\\\"true\\\"></span> update</a></td>"
+            . "<td><a class=\\\"btn btn-danger btn-xs\\\" href=\\\"#\\\" role=\\\"button\\\" " . ILARIA_ApplicationAsynchronous::getModalOnClickShow(ILARIA_ConfigurationGlobal::buildRequestChain('production', 'deletealttitle', array('id' => ':id')), true) . "><span class=\\\"glyphicon glyphicon-trash\\\" aria-hidden=\\\"true\\\"></span> delete</a></td>"
             . "</tr>";
     }
 
     protected function getDisplayError()
     {
         return "<tr>"
-        . "<td colspan=\\\"1\\\" style=\\\"text-align:center; font-weight: bold; font-color: #0066ff\\\">:error</td>"
+        . "<td colspan=\\\"3\\\" style=\\\"text-align:center; font-weight: bold; font-color: #0066ff\\\">:error</td>"
         . "</tr>";
     }
 

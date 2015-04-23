@@ -330,7 +330,7 @@ class ProductionModel extends ILARIA_ApplicationModel
     {
         try
         {
-            $sql = "SELECT TI.`title`"
+            $sql = "SELECT TI.`id`, TI.`title`"
                 . " FROM `title` TI"
                 . " WHERE TI.`production_id`=" . $productionId
                 . " AND TI.`id`!=" . $mainTitleId;
