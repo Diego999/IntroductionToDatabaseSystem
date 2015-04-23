@@ -15,8 +15,9 @@ class ProductioncompaniesAsynchronous extends ILARIA_ApplicationAsynchronous
     protected function getDisplayStructure($params)
     {
         return "<table class=\"table\" id=\"" . $this->getContainerId() . "\">"
-            . "<tr><th>Name</th><th>Country</th><th>Type</th></tr>"
-            . "<tr id=\"" . $this->getLoadingId() . "\"><td colspan=\"3\" style=\"text-align:center\">" . $this->getLoadingGif() . "</td></tr>"
+            . "<tr class=\"insertor\"><td colspan=\"5\"><a class=\"btn btn-danger btn-sm\" href=\"" . ILARIA_ConfigurationGlobal::buildRequestChain("productioncompany", "insert", array('prodid' => $params['prod_id'])) . "\" role=\"button\"><span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span> insert</a></td></tr>"
+            . "<tr><th>Name</th><th>Country</th><th>Type</th><th></th><th></th></tr>"
+            . "<tr id=\"" . $this->getLoadingId() . "\"><td colspan=\"5\" style=\"text-align:center\">" . $this->getLoadingGif() . "</td></tr>"
             . "</table>";
     }
 
@@ -26,13 +27,15 @@ class ProductioncompaniesAsynchronous extends ILARIA_ApplicationAsynchronous
             . "<td><a class=\\\"btn btn-primary btn-xs\\\" href=\\\"" . ILARIA_ConfigurationGlobal::buildRequestChain("company", "details", array('id' => ':id')) . "\\\" role=\\\"button\\\"><span class=\\\"glyphicon glyphicon-arrow-right\\\" aria-hidden=\\\"true\\\"></span></a> :name</td>"
             . "<td>:country</td>"
             . "<td>:type</td>"
+            . "<td><a class=\\\"btn btn-danger btn-xs\\\" href=\\\"" . ILARIA_ConfigurationGlobal::buildRequestChain("productioncompany", "update", array('id' => ':pc_id')) . "\\\" role=\\\"button\\\"><span class=\\\"glyphicon glyphicon-pencil\\\" aria-hidden=\\\"true\\\"></span> update</a></td>"
+            . "<td><a class=\\\"btn btn-danger btn-xs\\\" href=\\\"#\\\" role=\\\"button\\\" " . ILARIA_ApplicationAsynchronous::getModalOnClickShow(ILARIA_ConfigurationGlobal::buildRequestChain('productioncompany', 'delete', array('id' => ':pc_id')), true) . "><span class=\\\"glyphicon glyphicon-trash\\\" aria-hidden=\\\"true\\\"></span> delete</a></td>"
             . "</tr>";
     }
 
     protected function getDisplayError()
     {
         return "<tr>"
-        . "<td colspan=\\\"2\\\" style=\\\"text-align:center; font-weight: bold; font-color: #0066ff\\\">:error</td>"
+        . "<td colspan=\\\"5\\\" style=\\\"text-align:center; font-weight: bold; font-color: #0066ff\\\">:error</td>"
         . "</tr>";
     }
 

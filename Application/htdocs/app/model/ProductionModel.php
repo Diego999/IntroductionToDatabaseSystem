@@ -299,7 +299,7 @@ class ProductionModel extends ILARIA_ApplicationModel
     {
         try
         {
-            $sql = "SELECT COM.`id` AS `id`, COM.`name` AS `name`, COU.`code` AS `country`, TY.`name` AS `type`"
+            $sql = "SELECT PC.`id` AS `pc_id`, COM.`id` AS `id`, COM.`name` AS `name`, COU.`code` AS `country`, TY.`name` AS `type`"
                 . " FROM `productioncompany` PC"
                 . " INNER JOIN `company` COM ON PC.`company_id` = COM.`id`"
                 . " INNER JOIN `country` COU ON COM.`country_id` = COU.`id`"
