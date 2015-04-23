@@ -11,18 +11,21 @@ class ProductiondetailsView extends ILARIA_ApplicationView
                 $keyTitle = 'prod_title';
                 $keyGender = 'prod_gender';
                 $year = $data['infos']['prod_year'];
+                $scudController = 'singleproduction';
                 break;
             case ProductionModel::CARD_SERIE:
                 $keyTitle = 'serie_title';
                 $keyGender = 'serie_gender';
                 $data['infos']['prod_kind'] = 'serie';
                 $year = ($data['infos']['serie_yearstart'] ? $data['infos']['serie_yearstart'] : "?") . "-" . ($data['infos']['serie_yearend'] ? $data['infos']['serie_yearend'] : "?");
+                $scudController = 'serie';
                 break;
             case ProductionModel::CARD_EPISODE:
                 $keyTitle = 'episode_title';
                 $keyGender = 'serie_gender';
                 $data['infos']['prod_kind'] = 'episode';
                 $year = $data['infos']['episode_year'];
+                $scudController = 'episode';
                 break;
             default:
                 break;
@@ -32,9 +35,18 @@ class ProductiondetailsView extends ILARIA_ApplicationView
         $this->output("<div class=\"row row-pad-top-20\">");
 
         // Production title
-        $this->output("<div class=\"col-md-10 col-md-offset-1\">");
+        $this->output("<div class=\"col-md-5 col-md-offset-1\">");
         $this->output("<h2>" . $data['infos'][$keyTitle] . "</h2>");
         $this->output("</div>");
+
+        // SCUD buttons
+        $this->output("<div class=\"col-md-5\" style=\"text-align:right\">");
+        $this->output("<a class=\"btn btn-danger btn-md\" href=\"" . ILARIA_ConfigurationGlobal::buildRequestChain($scudController, "update", array('id' => $data['infos']['prod_id'])) . "\" role=\"button\"><span class=\"glyphicon glyphicon-pencil\" aria-hidden=\"true\"></span> update</a>");
+        $this->output("<a class=\"btn btn-danger btn-md\" href=\"#\" role=\"button\" " . ILARIA_ApplicationAsynchronous::getModalOnClickShow(ILARIA_ConfigurationGlobal::buildRequestChain($scudController, 'delete', array('id' => $data['infos']['prod_id'])), false) . "><span class=\"glyphicon glyphicon-trash\" aria-hidden=\"true\"></span> delete</a>");
+        $this->output("</div>");
+
+        $this->output("</div>");
+        $this->output("<div class=\"row\">");
 
         // Begin left panel
         $this->output("<div class=\"col-md-7 col-md-offset-1\">");
