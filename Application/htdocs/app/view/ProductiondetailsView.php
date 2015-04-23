@@ -41,6 +41,15 @@ class ProductiondetailsView extends ILARIA_ApplicationView
 
         // SCUD buttons
         $this->output("<div class=\"col-md-5\" style=\"text-align:right\">");
+        switch ($data['cardinality'])
+        {
+            case ProductionModel::CARD_SINGLE:
+            case ProductionModel::CARD_EPISODE:
+                break;
+            case ProductionModel::CARD_SERIE:
+                $this->output("<a class=\"btn btn-danger btn-md\" href=\"" . ILARIA_ConfigurationGlobal::buildRequestChain("episode", "insert", array('serieid' => $data['infos']['prod_id'])) . "\" role=\"button\"><span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span> insert episode</a>");
+                break;
+        }
         $this->output("<a class=\"btn btn-danger btn-md\" href=\"" . ILARIA_ConfigurationGlobal::buildRequestChain($scudController, "update", array('id' => $data['infos']['prod_id'])) . "\" role=\"button\"><span class=\"glyphicon glyphicon-pencil\" aria-hidden=\"true\"></span> update</a>");
         $this->output("<a class=\"btn btn-danger btn-md\" href=\"#\" role=\"button\" " . ILARIA_ApplicationAsynchronous::getModalOnClickShow(ILARIA_ConfigurationGlobal::buildRequestChain($scudController, 'delete', array('id' => $data['infos']['prod_id'])), false) . "><span class=\"glyphicon glyphicon-trash\" aria-hidden=\"true\"></span> delete</a>");
         $this->output("</div>");
