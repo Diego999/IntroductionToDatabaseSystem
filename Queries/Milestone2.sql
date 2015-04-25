@@ -35,12 +35,14 @@ FROM
 # ~835 on Macbook Pro mid-2010
 # ~447 on Macbook Pro late-2013
 SELECT MIN(T.careerDuration) AS min, MAX(T.careerDuration) AS max, AVG(T.careerDuration) AS avg
-FROM (
+FROM(
     SELECT (MAX(P.year) - MIN(P.year)) as careerDuration
-	FROM `casting` C INNER JOIN `production` P
+	FROM 
+    (SELECT DISTINCT C.person_id, C.production_id FROM `casting` C) C
+    INNER JOIN
+    (SELECT P.id, P.year FROM `production` P WHERE P.year IS NOT NULL) P
 	ON C.production_id = P.id
-    WHERE P.year IS NOT NULL
-	GROUP BY C.person_id
+    GROUP BY C.person_id
     ) T;
     
 #d Compute the min, max and average number of actors in a production
