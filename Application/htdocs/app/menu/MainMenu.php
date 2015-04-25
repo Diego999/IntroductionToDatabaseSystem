@@ -11,6 +11,9 @@ class MainMenu extends ILARIA_ApplicationMenu
     const ENTRY_PERSONS = '87e2b43254b354ab754bfcad33ff4caa614294f9';
     const ENTRY_COMPANIES = 'da55515eda71d9e9d8199b0ad4b1843f161c559b';
     const ENTRY_MISCELLANEOUS = 'b7d68b15c0d5d313615160981eb1dd544c5e7597';
+    const ENTRY_MS2_QUERIES = 'ca70b8e32b5918f11070b01d8433f99f8b3e7d19';
+    const ENTRY_MS3_QUERIES = 'e5cf54d04f7f5b681e70b6fa5df2fb7e8c8cd03b';
+    const ENTRY_SQL_CONSOLE = '4e70684324c0e84f44c5bb745beecd019c03ed46';
 
     public function display()
     {
@@ -99,6 +102,21 @@ class MainMenu extends ILARIA_ApplicationMenu
                         ILARIA_ApplicationMenu::KEY_LINK => ILARIA_ConfigurationGlobal::buildRequestChain('directaccess', 'miscellaneous', array())
                     )
                 ),
+            ),
+            array(
+                ILARIA_ApplicationMenu::KEY_ID => self::ENTRY_MS2_QUERIES,
+                ILARIA_ApplicationMenu::KEY_NAME => 'MS2 queries',
+                ILARIA_ApplicationMenu::KEY_LINK => ILARIA_ConfigurationGlobal::buildRequestChain('milestone2','index', array())
+            ),
+            array(
+                ILARIA_ApplicationMenu::KEY_ID => self::ENTRY_MS3_QUERIES,
+                ILARIA_ApplicationMenu::KEY_NAME => 'MS3 queries',
+                ILARIA_ApplicationMenu::KEY_LINK => ILARIA_ConfigurationGlobal::buildRequestChain('home','index', array())
+            ),
+            array(
+                ILARIA_ApplicationMenu::KEY_ID => self::ENTRY_SQL_CONSOLE,
+                ILARIA_ApplicationMenu::KEY_NAME => 'Console',
+                ILARIA_ApplicationMenu::KEY_LINK => ILARIA_ConfigurationGlobal::buildRequestChain('home','index', array())
             ),
         );
     }

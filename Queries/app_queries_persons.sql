@@ -4,7 +4,7 @@ FROM
 	`person` PE
     INNER JOIN `name` NA ON PE.`name_id` = NA.`id`
 WHERE
-	PE.`id` = 2682115;
+	PE.`id` = /*2682115*/4883832;
     
 -- gather alternative names of a person with particular ID, except main name (here 2682115 = Jennifer Lawrence, main name is 2666765)
 SELECT DISTINCT NA.`id`, NA.`lastname`, NA.`firstname`

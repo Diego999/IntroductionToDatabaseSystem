@@ -1,7 +1,0 @@
-line 819536 / id 824190 : removed (175 cm) from size
-line 2710402 / id 2726001 : replaced 1/2 by 0.5 in centimeters
-line 2848752 / id 2865228 : rewritten 5'9 1/2 as 5' 9 1/2"
-line 3068990 / id 3086716 : removed (160cm) from size
-line 4049865 / id 4073747 : replaced 6", 0' by 6'
-line 2571426 / id 2586222 : removed a space in birthdate between december and the year
-line 3708910 / id 3730653 : removed /98 in birthdate
