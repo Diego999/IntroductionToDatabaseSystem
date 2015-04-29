@@ -9,6 +9,7 @@ WHERE S.`kind_id` IN (
     FROM `kind` K
     WHERE K.`name` IN ("tv movie","video movie","movie")
 )
+AND P.`year` IS NOT NULL
 GROUP BY P.`year`;
 
 #b Compute the ten countries with most production companies
@@ -32,7 +33,7 @@ FROM (
 INNER JOIN `country` COU ON SUB.`country_id` = COU.`id`;
 
 #c Compute the min, max and average career duration. (A career length is implied by the first and last production of a person)
-# ~835 on Macbook Pro mid-2010
+# ~750 on Macbook Pro mid-2010
 # ~447 on Macbook Pro late-2013
 SELECT MIN(T.`careerDuration`) AS `min`, MAX(T.`careerDuration`) AS `max`, AVG(T.`careerDuration`) AS `avg`
 FROM (
@@ -50,7 +51,7 @@ FROM (
 ) T;
     
 #d Compute the min, max and average number of actors in a production
-# ~175 sec on Macbook Pro 2010
+# ~170 sec on Macbook Pro 2010
 # ~95 sec on Macbook Pro late-2013
 SELECT MIN(T.`number`) AS `min`, MAX(T.`number`) AS `max`, AVG(T.`number`) AS `avg`
 FROM (
@@ -66,12 +67,11 @@ FROM (
 # ~2.5 on Macbook Pro late-2013
 SELECT MIN(P.`height`) AS `min`, MAX(P.`height`) AS `max`, AVG(P.`height`) AS `avg`
 FROM `person` P
-WHERE P.`height` IS NOT NULL
-	AND P.`gender` = "f";
+WHERE P.`height` IS NOT NULL AND P.`gender` = "f";
 
 #f List all pairs of persons and movies where the person has both directed the movie and acted in the movie.
 #Do not include tv and video movies.
-# ~215 sec on Macbook Pro mid-2010
+# ~150 sec on Macbook Pro mid-2010
 # ~324 sec on Macbook Pro late-2013
 SELECT DISTINCT C1.`person_id`, C1.`production_id`
 FROM (
@@ -89,7 +89,7 @@ FROM (
 	SELECT C.`person_id`, C.`production_id`
 	FROM `casting` C
     INNER JOIN `role` R ON C.`role_id` = R.`id` 
-    WHERE R.`name` = "producer"
+    WHERE R.`name` = "director"
 	AND C.`production_id` NOT IN (
 		SELECT S.`id`
         FROM `singleproduction` S
@@ -100,7 +100,7 @@ FROM (
 WHERE C1.`person_id` = C2.`person_id`;
 
 #g List the three most popular character names
-# 11.3 sec on Macbook Pro mid-2010
+# 10.0 sec on Macbook Pro mid-2010
 # 18 sec on Macbook Pro late-2013
 SELECT CH.`name`
 FROM (
