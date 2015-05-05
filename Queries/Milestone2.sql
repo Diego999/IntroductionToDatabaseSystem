@@ -71,33 +71,35 @@ WHERE P.`height` IS NOT NULL AND P.`gender` = "f";
 
 #f List all pairs of persons and movies where the person has both directed the movie and acted in the movie.
 #Do not include tv and video movies.
-# ~150 sec on Macbook Pro mid-2010
-# ~324 sec on Macbook Pro late-2013
-SELECT DISTINCT C1.`person_id`, C1.`production_id`
-FROM (
-	SELECT C.`person_id`, C.`production_id`
-	FROM `casting` C
-    INNER JOIN `role` R ON C.`role_id` = R.`id` 
-    WHERE R.`name` = "actor"
-	AND C.`production_id` NOT IN (
-		SELECT S.`id`
-        FROM `singleproduction` S
-        INNER JOIN `kind` K ON S.`kind_id` = K.`id`
-        WHERE K.`name` = "movie"
-	)
-) C1, (
-	SELECT C.`person_id`, C.`production_id`
-	FROM `casting` C
-    INNER JOIN `role` R ON C.`role_id` = R.`id` 
-    WHERE R.`name` = "director"
-	AND C.`production_id` NOT IN (
-		SELECT S.`id`
-        FROM `singleproduction` S
-        INNER JOIN `kind` K ON S.`kind_id` = K.`id`
-        WHERE K.`name` = "movie"
-	)
-) C2
-WHERE C1.`person_id` = C2.`person_id`;
+# ~1.5 sec on Macbook Pro mid-2010
+# ~X sec on Macbook Pro late-2013
+
+SELECT DISTINCT C.person_id, C.production_id
+FROM `casting` C
+WHERE EXISTS
+(
+	SELECT CC.id
+    FROM `casting` CC
+    INNER JOIN `role` R
+    ON CC.role_id = R.id
+    WHERE CC.person_id = C.person_id
+    AND CC.production_id = C.production_id
+    AND R.name = "director"
+    AND EXISTS
+    (
+    	SELECT CC.id
+		FROM `casting` CC
+		INNER JOIN `role` R
+		ON CC.role_id = R.id
+        INNER JOIN `singleproduction` S
+		ON CC.production_id = S.id
+		INNER JOIN `kind` K ON S.`kind_id` = K.`id`
+		WHERE K.`name` = "movie"
+		AND CC.person_id = C.person_id
+		AND CC.production_id = C.production_id
+		AND R.name = "actor"
+    )
+);
 
 #g List the three most popular character names
 # 10.0 sec on Macbook Pro mid-2010
