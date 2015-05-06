@@ -1,6 +1,6 @@
 #a Compute the number of movies per year. Make sure to include tv and video movies.
-# ~2.0 sec on Macbook Pro mid-2010
-# ~1.5 sec on Macbook Pro late-2013
+# ~3.5 sec on Macbook Pro mid-2010
+# ~2.0 sec on Macbook Pro late-2013
 SELECT P.`year`, COUNT(P.`id`)
 FROM `production` P
 INNER JOIN `singleproduction` S ON P.`id` = S.`id` 
@@ -13,7 +13,7 @@ AND P.`year` IS NOT NULL
 GROUP BY P.`year`;
 
 #b Compute the ten countries with most production companies
-# ~11 sec on Macbook Pro mid-2010
+# ~10 sec on Macbook Pro mid-2010
 # ~5 sec on Macbook Pro late-2013
 SELECT COU.`id`, COU.`code`, SUB.`number`
 FROM (
@@ -34,7 +34,7 @@ INNER JOIN `country` COU ON SUB.`country_id` = COU.`id`;
 
 #c Compute the min, max and average career duration. (A career length is implied by the first and last production of a person)
 # ~750 on Macbook Pro mid-2010
-# ~447 on Macbook Pro late-2013
+# ~360 on Macbook Pro late-2013
 SELECT MIN(T.`careerDuration`) AS `min`, MAX(T.`careerDuration`) AS `max`, AVG(T.`careerDuration`) AS `avg`
 FROM (
     SELECT (MAX(P.`year`) - MIN(P.`year`)) AS `careerDuration`
@@ -52,7 +52,7 @@ FROM (
     
 #d Compute the min, max and average number of actors in a production
 # ~170 sec on Macbook Pro 2010
-# ~95 sec on Macbook Pro late-2013
+# ~88 sec on Macbook Pro late-2013
 SELECT MIN(T.`number`) AS `min`, MAX(T.`number`) AS `max`, AVG(T.`number`) AS `avg`
 FROM (
 	SELECT COUNT(C.`id`) AS `number`
@@ -64,7 +64,7 @@ FROM (
 
 #e Compute the min, max and average height of female persons.    
 # ~1.0 on Macbook Pro mid-2010
-# ~2.5 on Macbook Pro late-2013
+# ~0.7 on Macbook Pro late-2013
 SELECT MIN(P.`height`) AS `min`, MAX(P.`height`) AS `max`, AVG(P.`height`) AS `avg`
 FROM `person` P
 WHERE P.`height` IS NOT NULL AND P.`gender` = "f";
@@ -72,7 +72,7 @@ WHERE P.`height` IS NOT NULL AND P.`gender` = "f";
 #f List all pairs of persons and movies where the person has both directed the movie and acted in the movie.
 #Do not include tv and video movies.
 # ~1.5 sec on Macbook Pro mid-2010
-# ~X sec on Macbook Pro late-2013
+# ~0.7 sec on Macbook Pro late-2013
 
 SELECT DISTINCT C.person_id, C.production_id
 FROM `casting` C
@@ -103,7 +103,7 @@ WHERE EXISTS
 
 #g List the three most popular character names
 # 10.0 sec on Macbook Pro mid-2010
-# 18 sec on Macbook Pro late-2013
+# 5.7 sec on Macbook Pro late-2013
 SELECT CH.`name`
 FROM (
 	SELECT CA.`character_id`, COUNT(CA.`id`) AS `number`

@@ -1,7 +1,7 @@
 #a Find the actors and actresses (and report the productions) who played in a production
 #where they were 55 or more year older than the youngest actor/actress playing
 # ~76 sec on Macbook Pro mid-2010
-# ~X sec on Macbook Pro late-2013
+# 45 sec on Macbook Pro late-2013
 
 SELECT DISTINCT C.`person_id`, C.`production_id`
 FROM `casting` C
@@ -25,7 +25,7 @@ AND EXISTS
 
 #b Given an actor, compute his most productive year
 # ~0.001 sec on Macbook Pro mid-2010
-# ~X sec on Macbook Pro late-2013
+# ~0.001 sec on Macbook Pro late-2013
 # Given actor 4
 SELECT P.year, COUNT(*) AS number
 FROM
@@ -44,7 +44,7 @@ LIMIT 0,1;
 #c Given a year, list the company with the highest number of productions in each genre
 # Only production company, a company per gender
 # ~2.4 sec on Macbook Pro mid-2010
-# ~X sec on Macbook Pro late-2013
+# ~2.1 sec on Macbook Pro late-2013
 SELECT T.`gender_id`, T.`company_id`, T.`number`#, MAX(T.number) as number
 FROM
 (
@@ -65,7 +65,7 @@ GROUP BY T.`gender_id`; # We can use this trick which takes the first element (w
 #d Compute who worked with spouses/children/potential relatives on the same production.
 #(You can assume that the same real surname (last name) implies a relation)
 # ~20 sec on Macbook Pro mid-2010
-# ~X sec on Macbook Pro late-2013
+# ~3.6 sec on Macbook Pro late-2013
 
 SELECT DISTINCT C.person_id, C.production_id
 FROM `casting` C
@@ -88,7 +88,7 @@ WHERE EXISTS
 
 #e Compute the of average number of actors per production per year
 # ~110 sec on Macbook Pro mid-2010
-# ~X sec on Macbook Pro late-2013
+# ~52 sec on Macbook Pro late-2013
 
 SELECT P.`year`, AVG(T.`number`) AS `number`
 FROM
@@ -107,7 +107,7 @@ GROUP BY P.`year`;
     
 #f Compute the average number of episodes per season
 # ~1 sec on Macbook Pro mid-2010
-# ~X sec on Macbook Pro late-2013
+# ~0.5 sec on Macbook Pro late-2013
 
 SELECT AVG(T.`number`) AS `number`
 FROM
@@ -119,7 +119,7 @@ FROM
 
 #g Compute the average number of seasons per series
 # ~0.1 sec on Macbook Pro mid-2010
-# ~X sec on Macbook Pro late-2013
+# ~0.07 sec on Macbook Pro late-2013
 
 SELECT AVG(T.`number`) AS `number`
 FROM
@@ -131,7 +131,7 @@ FROM
 
 #h Compute the top ten tv-series (by number of seasons)
 # ~0.1 sec on Macbook Pro mid-2010
-# ~X sec on Macbook Pro late-2013
+# ~0.038 sec on Macbook Pro late-2013
 
 SELECT S.`id`, T.`number`
 FROM
@@ -147,7 +147,7 @@ ON S.`id` = T.`serie_id`;
 
 #i Compute the top ten tv-series (by number of episodes per season)
 # ~1 sec on Macbook Pro mid-2010
-# ~X sec on Macbook Pro late-2013
+# ~0.6 sec on Macbook Pro late-2013
 
 SELECT S.`serie_id`, AVG(T.`number`) AS `number`
 FROM
@@ -164,7 +164,7 @@ LIMIT 0,10;
 
 #j Find actors, actresses and directors who have movies (including tv movies and video movies) released after their death
 # ~14.5 sec on Macbook Pro mid-2010
-# ~X sec on Macbook Pro late-2013
+# ~6 sec on Macbook Pro late-2013
 
 SELECT DISTINCT Per.`id`#, C.production_id, P.year, Per.deathdate
 FROM `casting` C
@@ -185,7 +185,7 @@ AND P.`year` > EXTRACT(YEAR FROM Per.`deathdate`);
 
 #k For each year, show three companies that released the most movies
 # ~162 sec on Macbook Pro mid-2010
-# ~X sec on Macbook Pro late-2013
+# ~75 sec on Macbook Pro late-2013
 
 SELECT T.`year`, T.`company_id`, T.`number`
 FROM
@@ -213,7 +213,7 @@ WHERE year_rank <= 3;
 
 #l List all living people who are opera singers ordered from youngest to oldest
 # ~5 sec on Macbook Pro mid-2010
-# ~X sec on Macbook Pro late-2013
+# ~4 sec on Macbook Pro late-2013
 
 SELECT P.`id` FROM `person` P 
 WHERE 
@@ -225,7 +225,7 @@ ORDER BY P.`birthdate` DESC;
 #A credit is ambiguous if either a person has multiple alternative names or a production has multiple alternative titles.
 #The degree of ambiguity is a product of the number of possible names (real name + all alternatives) and the number of possible titles (real + alternatives)
 # ~42 sec on Macbook Pro mid-2010
-# ~X sec on Macbook Pro late-2013
+# ~25 sec on Macbook Pro late-2013
 
 SELECT DISTINCT C.person_id, C.production_id, N.`number`*T.`number` AS `number`
 FROM `casting` C
