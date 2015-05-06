@@ -251,14 +251,8 @@ LIMIT 0,10;
 #n For each country, list the most frequent character name that appears in the productions of a production company (not a distributor) from that country
 # ~X sec on Macbook Pro mid-2010
 # ~X sec on Macbook Pro late-2013
-/*
-SELECT TY.`id`
-FROM `type` TY
-WHERE TY.`name` = "production companies";
 
-SELECT COU.`id`, CH.`name`
-FROM
-	*/
+# TO IMPROVE
 
 SELECT Comp.`country_id`, COUNT(C.`character_id`) AS `number`
 FROM `casting` C
