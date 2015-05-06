@@ -219,58 +219,57 @@ SELECT P.`id` FROM `person` P
 WHERE 
 P.`birthdate` IS NOT NULL AND P.`deathdate` IS NULL AND
 (P.`trivia` LIKE "%opera singer%" OR P.`minibiography` LIKE "%opera singer%") 
-ORDER BY P.`birthdate` ASC;
+ORDER BY P.`birthdate` DESC;
 
 #m List 10 most ambiguous credits (pairs of people and productions) ordered by the degree of ambiguity.
 #A credit is ambiguous if either a person has multiple alternative names or a production has multiple alternative titles.
 #The degree of ambiguity is a product of the number of possible names (real name + all alternatives) and the number of possible titles (real + alternatives)
-# ~X sec on Macbook Pro mid-2010
+# ~42 sec on Macbook Pro mid-2010
 # ~X sec on Macbook Pro late-2013
 
-/*
-TO IMPROVE
-
-SELECT DISTINCT C.person_id, C.production_id, COUNT(N.id) as T1, COUNT(T.id) AS T2
+SELECT DISTINCT C.person_id, C.production_id, N.`number`*T.`number` AS `number`
 FROM `casting` C
-INNER JOIN `name` N
-ON N.person_id = C.person_id
-INNER JOIN `title` T
-ON C.person_id, C.production_id
-ORDER BY number DESC
-LIMIT 0,10;*/
-/*
-SELECT DISTINCT C.person_id, C.production_id, N.number*T.number as number
-FROM `casting` C,
+INNER JOIN
 (
-	SELECT N.person_id, COUNT(N.id) as number
+	SELECT N.person_id, COUNT(N.id) AS `number`
 	FROM `name` N
 	GROUP BY N.person_id
-) N,
+    HAVING `number` > 1
+) N
+ON C.person_id = N.person_id
+INNER JOIN
 (
-	SELECT T.production_id, COUNT(T.id) as number
+	SELECT T.production_id, COUNT(T.id) AS `number`
 	FROM `title` T
 	GROUP BY T.production_id
+    HAVING `number` > 1
 ) T
+ON C.production_id = T.production_id
 ORDER BY number DESC
 LIMIT 0,10;
-*/
 
 #n For each country, list the most frequent character name that appears in the productions of a production company (not a distributor) from that country
 # ~X sec on Macbook Pro mid-2010
 # ~X sec on Macbook Pro late-2013
-
 /*
-TO IMPROVE
+SELECT TY.`id`
+FROM `type` TY
+WHERE TY.`name` = "production companies";
+
+SELECT COU.`id`, CH.`name`
+FROM
+	*/
+
 SELECT Comp.`country_id`, COUNT(C.`character_id`) AS `number`
-		FROM `casting` C
-		INNER JOIN `productioncompany` PC
-		ON C.`production_id` = PC.`production_id`
-		INNER JOIN `type` T
-		ON PC.`type_id` = T.`id`
-        INNER JOIN `company` Comp
-        ON PC.`company_id` = Comp.`id`
-		WHERE T.`name` = "production companies"
-		AND Comp.`country_id` IS NOT NULL
-        AND C.`character_id` IS NOT NULL
-		GROUP BY Comp.`country_id`;
-*/
+FROM `casting` C
+INNER JOIN `productioncompany` PC
+ON C.`production_id` = PC.`production_id`
+INNER JOIN `type` T
+ON PC.`type_id` = T.`id`
+INNER JOIN `company` Comp
+ON PC.`company_id` = Comp.`id`
+WHERE T.`name` = "production companies"
+AND Comp.`country_id` IS NOT NULL
+AND C.`character_id` IS NOT NULL
+GROUP BY Comp.`country_id`
+ORDER BY `number`;
