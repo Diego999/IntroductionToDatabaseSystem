@@ -35,6 +35,9 @@ INNER JOIN `country` COU ON SUB.`country_id` = COU.`id`;
 #c Compute the min, max and average career duration. (A career length is implied by the first and last production of a person)
 # ~750 on Macbook Pro mid-2010
 # ~360 on Macbook Pro late-2013
+
+# TODO : IMPROVE MATERIALIZED VIEW
+
 SELECT MIN(T.`careerDuration`) AS `min`, MAX(T.`careerDuration`) AS `max`, AVG(T.`careerDuration`) AS `avg`
 FROM (
     SELECT (MAX(P.`year`) - MIN(P.`year`)) AS `careerDuration`
@@ -53,6 +56,9 @@ FROM (
 #d Compute the min, max and average number of actors in a production
 # ~170 sec on Macbook Pro 2010
 # ~88 sec on Macbook Pro late-2013
+
+# TODO : IMPROVE MATERIALIZED VIEW
+
 SELECT MIN(T.`number`) AS `min`, MAX(T.`number`) AS `max`, AVG(T.`number`) AS `avg`
 FROM (
 	SELECT COUNT(C.`id`) AS `number`

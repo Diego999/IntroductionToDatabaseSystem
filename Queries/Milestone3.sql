@@ -1,7 +1,7 @@
 #a Find the actors and actresses (and report the productions) who played in a production
 #where they were 55 or more year older than the youngest actor/actress playing
 # ~76 sec on Macbook Pro mid-2010
-# 45 sec on Macbook Pro late-2013
+# ~45 sec on Macbook Pro late-2013
 
 SELECT DISTINCT C.`person_id`, C.`production_id`
 FROM `casting` C
@@ -187,6 +187,8 @@ AND P.`year` > EXTRACT(YEAR FROM Per.`deathdate`);
 # ~162 sec on Macbook Pro mid-2010
 # ~75 sec on Macbook Pro late-2013
 
+# TODO : IMPROVE MATERIALIZED VIEW
+
 SELECT T.`year`, T.`company_id`, T.`number`
 FROM
 (
@@ -252,7 +254,7 @@ LIMIT 0,10;
 # ~X sec on Macbook Pro mid-2010
 # ~X sec on Macbook Pro late-2013
 
-# TO IMPROVE
+# TODO : IMPROVE MATERIALIZED VIEW
 
 SELECT Comp.`country_id`, COUNT(C.`character_id`) AS `number`
 FROM `casting` C
