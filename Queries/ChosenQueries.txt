@@ -1,0 +1,9 @@
+Explain the necessities of indexes based on the queries and the query plans that you can find from the
+system (you are free to select any 3 queries you like from the queries of the 3rd deliverable).
+
+We choose : j, m, e
+
+Report the running time of all queries in milliseconds and explain the distribution of the cost (based again
+on the plans) for 3 queries selected in part 2.
+
+We choose : g, b, a
