@@ -33,40 +33,82 @@ FROM (
 INNER JOIN `country` COU ON SUB.`country_id` = COU.`id`;
 
 #c Compute the min, max and average career duration. (A career length is implied by the first and last production of a person)
+# Simple query
 # ~750 on Macbook Pro mid-2010
 # ~360 on Macbook Pro late-2013
 
-# TODO : IMPROVE MATERIALIZED VIEW
+# With materialized view
+# 2.2 Macbook Pro
+DROP TABLE IF EXISTS m2c_careerduration;
+CREATE TABLE m2c_careerduration (
+	person_id	 INT UNSIGNED,
+    careerDuration INT UNSIGNED,
+    PRIMARY KEY (`person_id`)
+);
 
-SELECT MIN(T.`careerDuration`) AS `min`, MAX(T.`careerDuration`) AS `max`, AVG(T.`careerDuration`) AS `avg`
-FROM (
-    SELECT (MAX(P.`year`) - MIN(P.`year`)) AS `careerDuration`
+DROP PROCEDURE IF EXISTS refresh_m2c_careerduration;
+DELIMITER $$
+CREATE PROCEDURE refresh_m2c_careerduration ()
+BEGIN
+
+	TRUNCATE TABLE m2c_careerduration;
+
+	INSERT INTO m2c_careerduration (`person_id`, `careerDuration`)
+	SELECT C.`person_id`, (MAX(P.`year`) - MIN(P.`year`)) AS `careerDuration`
 	FROM (
 		SELECT DISTINCT C.`person_id`, C.`production_id`
-        FROM `casting` C
+		FROM `casting` C
 	) C
-    INNER JOIN (
+	INNER JOIN (
 		SELECT P.`id`, P.`year`
-        FROM `production` P
-        WHERE P.`year` IS NOT NULL
+		FROM `production` P
+		WHERE P.`year` IS NOT NULL
 	) P ON C.`production_id` = P.`id`
-    GROUP BY C.`person_id`
-) T;
+	GROUP BY C.`person_id`;
+END;
+$$
+DELIMITER ;
+# 1150 sec on Macbook Pro 2013
+CALL refresh_m2c_careerduration;
+
+SELECT MIN(T.`careerDuration`) AS `min`, MAX(T.`careerDuration`) AS `max`, AVG(T.`careerDuration`) AS `avg`
+FROM m2c_careerduration T;
     
 #d Compute the min, max and average number of actors in a production
+#Simple query
 # ~170 sec on Macbook Pro 2010
 # ~88 sec on Macbook Pro late-2013
 
-# TODO : IMPROVE MATERIALIZED VIEW
+# With materialized view
+# 1 sec on Macbook pro 2010
+DROP TABLE IF EXISTS m2d_nbactorproduction;
+CREATE TABLE m2d_nbactorproduction (
+	production_id	 INT UNSIGNED,
+    nb_actor 		 INT UNSIGNED,
+    PRIMARY KEY (`production_id`)
+);
 
-SELECT MIN(T.`number`) AS `min`, MAX(T.`number`) AS `max`, AVG(T.`number`) AS `avg`
-FROM (
-	SELECT COUNT(C.`id`) AS `number`
+DROP PROCEDURE IF EXISTS refresh_m2d_nbactorproduction;
+DELIMITER $$
+CREATE PROCEDURE refresh_m2d_nbactorproduction ()
+BEGIN
+
+	TRUNCATE TABLE m2d_nbactorproduction;
+
+	INSERT INTO m2d_nbactorproduction (`production_id`, `nb_actor`)
+	SELECT C.`production_id`, COUNT(C.`id`) AS `number`
 	FROM `casting` C
     INNER JOIN `role` R ON C.`role_id` = R.`id`
     WHERE R.`name` = "actor"
-	GROUP BY C.`production_id`
-) T;
+	GROUP BY C.`production_id`;
+END;
+$$
+DELIMITER ;
+# 227 sec on Macbook Pro 2010
+CALL refresh_m2d_nbactorproduction;
+
+SELECT MIN(T.`nb_actor`) AS `min`, MAX(T.`nb_actor`) AS `max`, AVG(T.`nb_actor`) AS `avg`
+FROM m2d_nbactorproduction T;
 
 #e Compute the min, max and average height of female persons.    
 # ~1.0 on Macbook Pro mid-2010
@@ -79,7 +121,6 @@ WHERE P.`height` IS NOT NULL AND P.`gender` = "f";
 #Do not include tv and video movies.
 # ~1.5 sec on Macbook Pro mid-2010
 # ~0.7 sec on Macbook Pro late-2013
-
 SELECT DISTINCT C.person_id, C.production_id
 FROM `casting` C
 WHERE EXISTS

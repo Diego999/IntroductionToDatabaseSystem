@@ -2,7 +2,6 @@
 #where they were 55 or more year older than the youngest actor/actress playing
 # ~76 sec on Macbook Pro mid-2010
 # ~45 sec on Macbook Pro late-2013
-
 SELECT DISTINCT C.`person_id`, C.`production_id`
 FROM `casting` C
 INNER JOIN (SELECT P.`id`, P.`birthdate` FROM `person` P WHERE P.`birthdate` IS NOT NULL) P
@@ -66,7 +65,6 @@ GROUP BY T.`gender_id`; # We can use this trick which takes the first element (w
 #(You can assume that the same real surname (last name) implies a relation)
 # ~20 sec on Macbook Pro mid-2010
 # ~3.6 sec on Macbook Pro late-2013
-
 SELECT DISTINCT C.person_id, C.production_id
 FROM `casting` C
 INNER JOIN `person` P
@@ -89,7 +87,6 @@ WHERE EXISTS
 #e Compute the of average number of actors per production per year
 # ~110 sec on Macbook Pro mid-2010
 # ~52 sec on Macbook Pro late-2013
-
 SELECT P.`year`, AVG(T.`number`) AS `number`
 FROM
 (
@@ -108,7 +105,6 @@ GROUP BY P.`year`;
 #f Compute the average number of episodes per season
 # ~1 sec on Macbook Pro mid-2010
 # ~0.5 sec on Macbook Pro late-2013
-
 SELECT AVG(T.`number`) AS `number`
 FROM
 (
@@ -120,7 +116,6 @@ FROM
 #g Compute the average number of seasons per series
 # ~0.1 sec on Macbook Pro mid-2010
 # ~0.07 sec on Macbook Pro late-2013
-
 SELECT AVG(T.`number`) AS `number`
 FROM
 (
@@ -132,7 +127,6 @@ FROM
 #h Compute the top ten tv-series (by number of seasons)
 # ~0.1 sec on Macbook Pro mid-2010
 # ~0.038 sec on Macbook Pro late-2013
-
 SELECT S.`id`, T.`number`
 FROM
 (
@@ -148,7 +142,6 @@ ON S.`id` = T.`serie_id`;
 #i Compute the top ten tv-series (by number of episodes per season)
 # ~1 sec on Macbook Pro mid-2010
 # ~0.6 sec on Macbook Pro late-2013
-
 SELECT S.`serie_id`, AVG(T.`number`) AS `number`
 FROM
 (
@@ -165,7 +158,6 @@ LIMIT 0,10;
 #j Find actors, actresses and directors who have movies (including tv movies and video movies) released after their death
 # ~14.5 sec on Macbook Pro mid-2010
 # ~6 sec on Macbook Pro late-2013
-
 SELECT DISTINCT Per.`id`#, C.production_id, P.year, Per.deathdate
 FROM `casting` C
 INNER JOIN `role` R
@@ -184,39 +176,59 @@ AND Per.`deathdate` IS NOT NULL
 AND P.`year` > EXTRACT(YEAR FROM Per.`deathdate`);
 
 #k For each year, show three companies that released the most movies
+# Simple query
 # ~162 sec on Macbook Pro mid-2010
 # ~75 sec on Macbook Pro late-2013
 
-# TODO : IMPROVE MATERIALIZED VIEW
+# With materialized view
+# 0.8 sec on Macbook pro 2010
+DROP TABLE IF EXISTS m3k_moviesbycompanyperyear;
+CREATE TABLE m3k_moviesbycompanyperyear (
+	year	 	INT UNSIGNED,
+    company_id 	INT UNSIGNED,
+    nb_movie	INT UNSIGNED,
+    PRIMARY KEY (`year`, `company_id`)
+);
 
-SELECT T.`year`, T.`company_id`, T.`number`
+DROP PROCEDURE IF EXISTS refresh_m3k_moviesbycompanyperyear;
+DELIMITER $$
+CREATE PROCEDURE refresh_m3k_moviesbycompanyperyear ()
+BEGIN
+
+	TRUNCATE TABLE m3k_moviesbycompanyperyear;
+
+	INSERT INTO m3k_moviesbycompanyperyear (`year`, `company_id`, `nb_movie`)
+	SELECT P.`year`, PC.`company_id`, COUNT(P.`id`) AS `number`
+	FROM `casting` C
+	INNER JOIN `production` P
+	ON C.`production_id` = P.`id`
+	INNER JOIN `productioncompany` PC
+	ON P.`id` = PC.`production_id`
+	INNER JOIN `type` T
+	ON PC.`type_id` = T.`id`
+	WHERE T.`name` = "production companies"
+	AND P.`year` IS NOT NULL
+	GROUP BY P.`year`, PC.`company_id`
+	ORDER BY P.`year`, `number` DESC;
+END;
+$$
+DELIMITER ;
+# 280 sec on Macbook Pro 2010
+CALL refresh_m3k_moviesbycompanyperyear;
+
+SELECT T.`year`, T.`company_id`, T.`nb_movie`
 FROM
 (
-	SELECT T.`year`, T.`company_id`, T.`number`,
+	SELECT T.`year`, T.`company_id`, T.`nb_movie`,
 	@year_rank := IF(@current_year = T.`year`, @year_rank + 1, 1) AS `year_rank`,
 	@current_year := T.`year`
-	FROM
-	(
-		SELECT P.`year`, PC.`company_id`, COUNT(P.`id`) AS `number`
-		FROM `casting` C
-		INNER JOIN `production` P
-		ON C.`production_id` = P.`id`
-		INNER JOIN `productioncompany` PC
-		ON P.`id` = PC.`production_id`
-		INNER JOIN `type` T
-		ON PC.`type_id` = T.`id`
-		WHERE T.`name` = "production companies"
-		AND P.`year` IS NOT NULL
-		GROUP BY P.`year`, PC.`company_id`
-		ORDER BY P.`year`, `number` DESC 
-	) T
+	FROM m3k_moviesbycompanyperyear T
 ) T
 WHERE year_rank <= 3;
 
 #l List all living people who are opera singers ordered from youngest to oldest
 # ~5 sec on Macbook Pro mid-2010
 # ~4 sec on Macbook Pro late-2013
-
 SELECT P.`id` FROM `person` P 
 WHERE 
 P.`birthdate` IS NOT NULL AND P.`deathdate` IS NULL AND
@@ -228,7 +240,6 @@ ORDER BY P.`birthdate` DESC;
 #The degree of ambiguity is a product of the number of possible names (real name + all alternatives) and the number of possible titles (real + alternatives)
 # ~42 sec on Macbook Pro mid-2010
 # ~25 sec on Macbook Pro late-2013
-
 SELECT DISTINCT C.person_id, C.production_id, N.`number`*T.`number` AS `number`
 FROM `casting` C
 INNER JOIN
@@ -251,21 +262,46 @@ ORDER BY number DESC
 LIMIT 0,10;
 
 #n For each country, list the most frequent character name that appears in the productions of a production company (not a distributor) from that country
-# ~X sec on Macbook Pro mid-2010
-# ~X sec on Macbook Pro late-2013
+# Simple query
+# ~1982 sec on Macbook Pro mid-2010
+# ~XXX sec on Macbook Pro late-2013
 
-# TODO : IMPROVE MATERIALIZED VIEW
+# With materialized view
+# 3.9 sec on Macbook pro 2010
+DROP TABLE IF EXISTS m3n_mostcharactercountry;
+CREATE TABLE m3n_mostcharactercountry (
+	country_id	 	INT UNSIGNED,
+    character_id 	INT UNSIGNED,
+    number	INT UNSIGNED,
+    PRIMARY KEY (`country_id`, `character_id`)
+);
 
-SELECT Comp.`country_id`, COUNT(C.`character_id`) AS `number`
-FROM `casting` C
-INNER JOIN `productioncompany` PC
-ON C.`production_id` = PC.`production_id`
-INNER JOIN `type` T
-ON PC.`type_id` = T.`id`
-INNER JOIN `company` Comp
-ON PC.`company_id` = Comp.`id`
-WHERE T.`name` = "production companies"
-AND Comp.`country_id` IS NOT NULL
-AND C.`character_id` IS NOT NULL
-GROUP BY Comp.`country_id`
-ORDER BY `number`;
+DROP PROCEDURE IF EXISTS refresh_m3n_mostcharactercountry;
+DELIMITER $$
+CREATE PROCEDURE refresh_m3n_mostcharactercountry ()
+BEGIN
+
+	TRUNCATE TABLE m3n_mostcharactercountry;
+
+	INSERT INTO m3n_mostcharactercountry (`country_id`, `character_id`, `number`)
+	SELECT Comp.`country_id`, C.`character_id`, COUNT(C.`character_id`) AS `number`
+	FROM `casting` C
+	INNER JOIN `productioncompany` PC
+	ON C.`production_id` = PC.`production_id`
+	INNER JOIN `type` T
+	ON PC.`type_id` = T.`id`
+	INNER JOIN `company` Comp
+	ON PC.`company_id` = Comp.`id`
+	WHERE T.`name` = "production companies"
+	AND Comp.`country_id` IS NOT NULL
+	AND C.`character_id` IS NOT NULL
+	GROUP BY Comp.`country_id`, C.`character_id`
+	ORDER BY Comp.`country_id`, `number` DESC, C.`character_id` ASC;
+END;
+$$
+DELIMITER ;
+CALL refresh_m3n_mostcharactercountry;
+
+SELECT T.`country_id`, T.`character_id`
+FROM m3n_mostcharactercountry T
+GROUP BY T.`country_id`;
