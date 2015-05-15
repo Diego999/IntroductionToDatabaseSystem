@@ -1,0 +1,25 @@
+1) Explain the necessities of indexes based on the queries and the query plans that you can find from the
+system (you are free to select any 3 queries you like from the queries of the 3rd deliverable).
+
+Query J:/Users/alex/Documents/Database/IntroductionToDatabaseSystem/Queries/QueryAnalysisAlex.txt
+Because of our heavy use of normalization (this will hold for the 6 analysis), we have a lot of joins to make in order to fulfill queries like Query J. Since we need information from big tables (such as `casting`), indexes are of the utmost importance to make a decent time, in that full screening of the tables is faster. In this example, the 5 `inner join`s will be greatly accelerated by the presence of indexes.
+
+Query M:
+This query is also heavy because of normalization: the number of tables in our schema will induce a high number of joins, as is the case here. Indexes on the tables `casting`, `name` and `title` will make the query faster.
+
+Query E:
+For this query, indexes on the tables `casting` and `production` will reduce the time reading the whole table takes, and accelerate the query.
+
+2) Report the running time of all queries in milliseconds and explain the distribution of the cost (based again
+on the plans) for 3 queries selected in part 2.
+
+We do not have precise information about the time distribution of the queries, so the following is only a rationnal explanation of the observed time, compared with other queries.
+
+Query G:
+This query is quite fast, on recent hardware, even with a join where the huge `casting` table is a part of, because we limit the results to the first 3 before doing an `inner join` with the `character` table. The instruction that takes the most time is probably the select on the `casting` table.
+
+Query B:
+This is also a fast query, because the size of the `company` and `country` tables (which are quite small). We still need to read the whole `company` table, so that’s probably the most costly part of the query.
+
+Query A:
+The first query is almost the fastest, because of its simplicity. We only need one `join` operation, because of our normalization, and this `join` is done on a subtable of `production` (ISA architecture). However, we need to go through all the movies to compute their total count per year, so that would be the costly part.
