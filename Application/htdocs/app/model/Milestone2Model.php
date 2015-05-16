@@ -80,24 +80,37 @@ class Milestone2Model extends ILARIA_ApplicationModel
         }
     }
 
+    public function refreshC()
+    {
+        try
+        {
+            $sql = "CALL refresh_m2c_careerduration";
+            $query = new ILARIA_DatabaseQuery($sql);
+            $this->getDatabase()->exec($query);
+            if ($query->getStatus() == 0)
+            {
+                return 0;
+            }
+            else
+            {
+                throw new ILARIA_CoreError("Error in Milestone2Model::refreshC : request returned status " . $query->getStatus(),
+                    ILARIA_CoreError::GEN_DB_QUERY_FAILED,
+                    ILARIA_CoreError::LEVEL_ADMIN);
+            }
+        }
+        catch (ILARIA_CoreError $e)
+        {
+            $e->writeToLog();
+            return -1;
+        }
+    }
+
     public function queryC()
     {
         try
         {
             $sql = "SELECT MIN(T.`careerDuration`) AS `min`, MAX(T.`careerDuration`) AS `max`, AVG(T.`careerDuration`) AS `avg`"
-                . " FROM ("
-                . " SELECT (MAX(P.`year`) - MIN(P.`year`)) AS `careerDuration`"
-	            . " FROM ("
-		        . " SELECT DISTINCT C.`person_id`, C.`production_id`"
-                . " FROM `casting` C"
-	            . " ) C"
-                . " INNER JOIN ("
-		        . " SELECT P.`id`, P.`year`"
-                . " FROM `production` P"
-                . " WHERE P.`year` IS NOT NULL"
-	            . " ) P ON C.`production_id` = P.`id`"
-                . " GROUP BY C.`person_id`"
-                . " ) T";
+                . " FROM m2c_careerduration T";
             $query = new ILARIA_DatabaseQuery($sql);
             $this->getDatabase()->query($query);
             if ($query->getStatus() == 0 && $query->getCount() == 1)
@@ -118,18 +131,37 @@ class Milestone2Model extends ILARIA_ApplicationModel
         }
     }
 
+    public function refreshD()
+    {
+        try
+        {
+            $sql = "CALL refresh_m2d_nbactorproduction";
+            $query = new ILARIA_DatabaseQuery($sql);
+            $this->getDatabase()->exec($query);
+            if ($query->getStatus() == 0)
+            {
+                return 0;
+            }
+            else
+            {
+                throw new ILARIA_CoreError("Error in Milestone2Model::refreshD : request returned status " . $query->getStatus(),
+                    ILARIA_CoreError::GEN_DB_QUERY_FAILED,
+                    ILARIA_CoreError::LEVEL_ADMIN);
+            }
+        }
+        catch (ILARIA_CoreError $e)
+        {
+            $e->writeToLog();
+            return -1;
+        }
+    }
+
     public function queryD()
     {
         try
         {
-            $sql = "SELECT MIN(T.`number`) AS `min`, MAX(T.`number`) AS `max`, AVG(T.`number`) AS `avg`"
-                . " FROM ("
-	            . " SELECT COUNT(C.`id`) AS `number`"
-	            . " FROM `casting` C"
-                . " INNER JOIN `role` R ON C.`role_id` = R.`id`"
-                . " WHERE R.`name` = \"actor\""
-	            . " GROUP BY C.`production_id`"
-                . " ) T";
+            $sql = "SELECT MIN(T.`nb_actor`) AS `min`, MAX(T.`nb_actor`) AS `max`, AVG(T.`nb_actor`) AS `avg`"
+                . " FROM m2d_nbactorproduction T";
             $query = new ILARIA_DatabaseQuery($sql);
             $this->getDatabase()->query($query);
             if ($query->getStatus() == 0 && $query->getCount() == 1)
@@ -182,31 +214,32 @@ class Milestone2Model extends ILARIA_ApplicationModel
     {
         try
         {
-            $sql = "SELECT DISTINCT C1.`person_id`, C1.`production_id`"
-                . " FROM ("
-	            . " SELECT C.`person_id`, C.`production_id`"
-	            . " FROM `casting` C"
-                . " INNER JOIN `role` R ON C.`role_id` = R.`id`"
-                . " WHERE R.`name` = \"actor\""
-	            . " AND C.`production_id` NOT IN ("
-		        . " SELECT S.`id`"
-                . " FROM `singleproduction` S"
-                . " INNER JOIN `kind` K ON S.`kind_id` = K.`id`"
-                . " WHERE K.`name` = \"movie\""
-	            . " )"
-                . " ) C1, ("
-	            . " SELECT C.`person_id`, C.`production_id`"
-	            . " FROM `casting` C"
-                . " INNER JOIN `role` R ON C.`role_id` = R.`id`"
-                . " WHERE R.`name` = \"producer\""
-	            . " AND C.`production_id` NOT IN ("
-		        . " SELECT S.`id`"
-                . " FROM `singleproduction` S"
-                . " INNER JOIN `kind` K ON S.`kind_id` = K.`id`"
-                . " WHERE K.`name` = \"movie\""
-	            . " )"
-                . " ) C2"
-                . " WHERE C1.`person_id` = C2.`person_id`";
+            $sql = "SELECT DISTINCT C.`person_id`, C.`production_id`"
+                . " FROM `casting` C"
+                . " WHERE EXISTS"
+                . " ("
+	            . " SELECT CC.`id`"
+                . " FROM `casting` CC"
+                . " INNER JOIN `role` R"
+                . " ON CC.`role_id` = R.`id`"
+                . " WHERE CC.`person_id` = C.`person_id`"
+                . " AND CC.`production_id` = C.`production_id`"
+                . " AND R.`name` = \"director\""
+                . " AND EXISTS"
+                . " ("
+    	        . " SELECT CC.`id`"
+		        . " FROM `casting` CC"
+		        . " INNER JOIN `role` R"
+		        . " ON CC.`role_id` = R.`id`"
+                . " INNER JOIN `singleproduction` S"
+		        . " ON CC.`production_id` = S.`id`"
+		        . " INNER JOIN `kind` K ON S.`kind_id` = K.`id`"
+		        . " WHERE K.`name` = \"movie\""
+		        . " AND CC.`person_id` = C.`person_id`"
+		        . " AND CC.`production_id` = C.`production_id`"
+		        . " AND R.`name` = \"actor\""
+                . " )"
+                . " )";
             $query = new ILARIA_DatabaseQuery($sql);
             $this->getDatabase()->query($query);
             if ($query->getStatus() == 0)

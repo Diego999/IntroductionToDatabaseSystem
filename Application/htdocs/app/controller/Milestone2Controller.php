@@ -14,7 +14,11 @@ class Milestone2Controller extends ILARIA_ApplicationController
                 return true;
             case 'queryb':
                 return true;
+            case 'refreshc':
+                return true;
             case 'queryc':
+                return true;
+            case 'refreshd':
                 return true;
             case 'queryd':
                 return true;
@@ -63,6 +67,14 @@ class Milestone2Controller extends ILARIA_ApplicationController
         $view->setTemplateName('frontend');
 
         // Load asynchronous module
+        $isRefresh = false;
+        if ($request->existGetArg('a'))
+        {
+            if ($request->getGetArg('a') == 'r')
+            {
+                $isRefresh = true;
+            }
+        }
         switch ($request->getGetArg('q'))
         {
             case 'a':
@@ -72,10 +84,24 @@ class Milestone2Controller extends ILARIA_ApplicationController
                 $asyncModule = $this->getAsynchronous("milestone2queryb");
                 break;
             case 'c':
-                $asyncModule = $this->getAsynchronous("milestone2queryc");
+                if ($isRefresh)
+                {
+                    $asyncModule = $this->getAsynchronous("milestone2refreshc");
+                }
+                else
+                {
+                    $asyncModule = $this->getAsynchronous("milestone2queryc");
+                }
                 break;
             case 'd':
-                $asyncModule = $this->getAsynchronous("milestone2queryd");
+                if ($isRefresh)
+                {
+                    $asyncModule = $this->getAsynchronous("milestone2refreshd");
+                }
+                else
+                {
+                    $asyncModule = $this->getAsynchronous("milestone2queryd");
+                }
                 break;
             case 'e':
                 $asyncModule = $this->getAsynchronous("milestone2querye");
@@ -112,10 +138,22 @@ class Milestone2Controller extends ILARIA_ApplicationController
         return $this->getAsynchronous("milestone2queryb")->getContent($params);
     }
 
+    public function action_refreshc($request)
+    {
+        $params = array();
+        return $this->getAsynchronous("milestone2refreshc")->getContent($params);
+    }
+
     public function action_queryc($request)
     {
         $params = array();
         return $this->getAsynchronous("milestone2queryc")->getContent($params);
+    }
+
+    public function action_refreshd($request)
+    {
+        $params = array();
+        return $this->getAsynchronous("milestone2refreshd")->getContent($params);
     }
 
     public function action_queryd($request)

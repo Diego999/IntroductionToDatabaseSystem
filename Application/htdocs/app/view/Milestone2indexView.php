@@ -40,6 +40,7 @@ class Milestone2indexView extends ILARIA_ApplicationView
         $this->output("</div><div class=\"panel-body\">");
         $this->output("<p>Compute the min, max and average career duration. (A career length is implied by the first and last production of a person)</p>");
         $this->output("<a class=\"btn btn-primary\" href=\"" . ILARIA_ConfigurationGlobal::buildRequestChain("milestone2", "display", array('q' => 'c')) . "\" role=\"button\">Execute</a>");
+        $this->output("<a class=\"btn btn-danger\" href=\"" . ILARIA_ConfigurationGlobal::buildRequestChain("milestone2", "display", array('q' => 'c', 'a' => 'r')) . "\" role=\"button\">Refresh (~8 minutes)</a>");
         $this->output("</div>");
         $this->output("</div>");
 
@@ -50,6 +51,7 @@ class Milestone2indexView extends ILARIA_ApplicationView
         $this->output("</div><div class=\"panel-body\">");
         $this->output("<p>Compute the min, max and average number of actors in a production.</p>");
         $this->output("<a class=\"btn btn-primary\" href=\"" . ILARIA_ConfigurationGlobal::buildRequestChain("milestone2", "display", array('q' => 'd')) . "\" role=\"button\">Execute</a>");
+        $this->output("<a class=\"btn btn-danger\" href=\"" . ILARIA_ConfigurationGlobal::buildRequestChain("milestone2", "display", array('q' => 'd', 'a' => 'r')) . "\" role=\"button\">Refresh (~3 minutes)</a>");
         $this->output("</div>");
         $this->output("</div>");
 
