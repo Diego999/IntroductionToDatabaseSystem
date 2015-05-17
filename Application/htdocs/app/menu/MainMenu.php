@@ -111,7 +111,7 @@ class MainMenu extends ILARIA_ApplicationMenu
             array(
                 ILARIA_ApplicationMenu::KEY_ID => self::ENTRY_MS3_QUERIES,
                 ILARIA_ApplicationMenu::KEY_NAME => 'MS3 queries',
-                ILARIA_ApplicationMenu::KEY_LINK => ILARIA_ConfigurationGlobal::buildRequestChain('home','index', array())
+                ILARIA_ApplicationMenu::KEY_LINK => ILARIA_ConfigurationGlobal::buildRequestChain('milestone3','index', array())
             ),
             array(
                 ILARIA_ApplicationMenu::KEY_ID => self::ENTRY_SQL_CONSOLE,

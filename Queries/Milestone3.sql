@@ -4,22 +4,26 @@
 # ~45 sec on Macbook Pro late-2013
 SELECT DISTINCT C.`person_id`, C.`production_id`
 FROM `casting` C
-INNER JOIN (SELECT P.`id`, P.`birthdate` FROM `person` P WHERE P.`birthdate` IS NOT NULL) P
-ON C.`person_id` = P.`id`
-INNER JOIN `role` R
-ON C.`role_id` = R.`id`
+INNER JOIN (
+	SELECT P.`id`, P.`birthdate`
+    FROM `person` P
+    WHERE P.`birthdate`
+    IS NOT NULL
+) P ON C.`person_id` = P.`id`
+INNER JOIN `role` R ON C.`role_id` = R.`id`
 WHERE R.`name` IN ("actor", "actress")
-AND EXISTS
-(
-		SELECT MIN(PP.`birthdate`) as `min_birthdate`
-		FROM `casting` CC
-		INNER JOIN (SELECT PP.`id`, PP.`birthdate` FROM `person` PP WHERE PP.`birthdate` IS NOT NULL) PP
-		ON CC.`person_id` = PP.`id`
-		INNER JOIN `role` R
-		ON CC.`role_id` = R.`id`
-		WHERE CC.`production_id` = C.`production_id`
-        AND R.`name` IN ("actor", "actress")
-        HAVING TIMESTAMPDIFF(YEAR, `min_birthdate`, P.`birthdate`) >= 55
+AND EXISTS (
+	SELECT MIN(PP.`birthdate`) as `min_birthdate`
+	FROM `casting` CC
+	INNER JOIN (
+		SELECT PP.`id`, PP.`birthdate`
+        FROM `person` PP
+        WHERE PP.`birthdate` IS NOT NULL
+	) PP ON CC.`person_id` = PP.`id`
+	INNER JOIN `role` R ON CC.`role_id` = R.`id`
+	WHERE CC.`production_id` = C.`production_id`
+	AND R.`name` IN ("actor", "actress")
+	HAVING TIMESTAMPDIFF(YEAR, `min_birthdate`, P.`birthdate`) >= 55
 );
 
 #b Given an actor, compute his most productive year
@@ -27,14 +31,12 @@ AND EXISTS
 # ~0.001 sec on Macbook Pro late-2013
 # Given actor 4
 SELECT P.year, COUNT(*) AS number
-FROM
-(
+FROM (
 	SELECT C.`production_id`
 	FROM `casting` C 
 	WHERE C.`person_id` = 4 # Given actor
 ) T
-INNER JOIN `production` P
-ON T.`production_id` = P.`id`
+INNER JOIN `production` P ON T.`production_id` = P.`id`
 WHERE P.`year` IS NOT NULL
 GROUP BY P.`year`
 ORDER BY number DESC
@@ -45,14 +47,11 @@ LIMIT 0,1;
 # ~2.4 sec on Macbook Pro mid-2010
 # ~2.1 sec on Macbook Pro late-2013
 SELECT T.`gender_id`, T.`company_id`, T.`number`#, MAX(T.number) as number
-FROM
-(
-SELECT PP.`gender_id`, P.`company_id`, COUNT(P.`company_id`) AS `number`
+FROM (
+	SELECT PP.`gender_id`, P.`company_id`, COUNT(P.`company_id`) AS `number`
 	FROM `productioncompany` P
-	INNER JOIN `production`PP
-	ON PP.`id` = P.`production_id`
-	INNER JOIN `type` T
-	ON P.`type_id` = T.`id`
+	INNER JOIN `production`PP ON PP.`id` = P.`production_id`
+	INNER JOIN `type` T ON P.`type_id` = T.`id`
 	WHERE T.`name` = "production companies"
 	AND PP.`year` = 2013 # Given year
 	AND PP.`gender_id` IS NOT NULL
@@ -67,18 +66,13 @@ GROUP BY T.`gender_id`; # We can use this trick which takes the first element (w
 # ~3.6 sec on Macbook Pro late-2013
 SELECT DISTINCT C.person_id, C.production_id
 FROM `casting` C
-INNER JOIN `person` P
-ON C.person_id = P.id
-INNER JOIN `name` N
-ON P.name_id = N.id
-WHERE EXISTS
-(
+INNER JOIN `person` P ON C.person_id = P.id
+INNER JOIN `name` N ON P.name_id = N.id
+WHERE EXISTS (
 	SELECT CC.id
     FROM `casting` CC
-	INNER JOIN `person` PP
-	ON CC.person_id = PP.id
-	INNER JOIN `name` NN
-	ON PP.name_id = NN.id
+	INNER JOIN `person` PP ON CC.person_id = PP.id
+	INNER JOIN `name` NN ON PP.name_id = NN.id
     WHERE CC.production_id = C.production_id
     AND CC.person_id <> C.person_id
     AND N.lastname = NN.lastname
@@ -88,17 +82,14 @@ WHERE EXISTS
 # ~110 sec on Macbook Pro mid-2010
 # ~52 sec on Macbook Pro late-2013
 SELECT P.`year`, AVG(T.`number`) AS `number`
-FROM
-(
+FROM (
 	SELECT C.`production_id`, COUNT(DISTINCT C.`person_id`) as number
 	FROM `casting` C
-    INNER JOIN `role` R
-    ON C.`role_id` = R.`id`
+    INNER JOIN `role` R ON C.`role_id` = R.`id`
     WHERE R.`name` = "actor"
 	GROUP BY C.`production_id`
 ) T
-INNER JOIN `production` P
-ON P.`id` = T.`production_id`
+INNER JOIN `production` P ON P.`id` = T.`production_id`
 WHERE P.`year` IS NOT NULL
 GROUP BY P.`year`;
     
@@ -106,8 +97,7 @@ GROUP BY P.`year`;
 # ~1 sec on Macbook Pro mid-2010
 # ~0.5 sec on Macbook Pro late-2013
 SELECT AVG(T.`number`) AS `number`
-FROM
-(
+FROM (
 	SELECT E.`season_id`, COUNT(E.`id`) AS `number`
 	FROM `episode` E
 	GROUP BY E.`season_id`
@@ -117,8 +107,7 @@ FROM
 # ~0.1 sec on Macbook Pro mid-2010
 # ~0.07 sec on Macbook Pro late-2013
 SELECT AVG(T.`number`) AS `number`
-FROM
-(
+FROM (
 	SELECT S.`serie_id`, COUNT(S.`id`) AS `number`
 	FROM `season` S
 	GROUP BY S.`serie_id`
@@ -128,29 +117,25 @@ FROM
 # ~0.1 sec on Macbook Pro mid-2010
 # ~0.038 sec on Macbook Pro late-2013
 SELECT S.`id`, T.`number`
-FROM
-(
+FROM (
 	SELECT S.`serie_id`, COUNT(S.`id`) AS `number`
 	FROM `season` S
 	GROUP BY S.`serie_id`
 	ORDER BY `number` DESC
 	LIMIT 0,10
 ) T
-INNER JOIN `serie` S
-ON S.`id` = T.`serie_id`;
+INNER JOIN `serie` S ON S.`id` = T.`serie_id`;
 
 #i Compute the top ten tv-series (by number of episodes per season)
 # ~1 sec on Macbook Pro mid-2010
 # ~0.6 sec on Macbook Pro late-2013
 SELECT S.`serie_id`, AVG(T.`number`) AS `number`
-FROM
-(
+FROM (
 	SELECT E.`season_id`, COUNT(E.`id`) AS `number`
 	FROM `episode` E
 	GROUP BY E.`season_id`
 ) T
-INNER JOIN `season` S
-ON T.`season_id` = S.`id`
+INNER JOIN `season` S ON T.`season_id` = S.`id`
 GROUP BY S.`serie_id`
 ORDER BY `number` DESC
 LIMIT 0,10;
@@ -160,16 +145,11 @@ LIMIT 0,10;
 # ~6 sec on Macbook Pro late-2013
 SELECT DISTINCT Per.`id`#, C.production_id, P.year, Per.deathdate
 FROM `casting` C
-INNER JOIN `role` R
-ON C.`role_id` = R.`id`
-INNER JOIN `production` P
-ON C.`production_id` = P.`id`
-INNER JOIN `singleproduction` S
-ON P.`id` = S.`id`
-INNER JOIN `kind` K
-ON S.`kind_id` = K.`id`
-INNER JOIN `person` Per
-ON C.`person_id` = Per.`id`
+INNER JOIN `role` R ON C.`role_id` = R.`id`
+INNER JOIN `production` P ON C.`production_id` = P.`id`
+INNER JOIN `singleproduction` S ON P.`id` = S.`id`
+INNER JOIN `kind` K ON S.`kind_id` = K.`id`
+INNER JOIN `person` Per ON C.`person_id` = Per.`id`
 WHERE R.`name` IN ("actor", "actress", "director")
 AND K.`name` IN ("movie", "tv movie", "video movie")
 AND Per.`deathdate` IS NOT NULL
@@ -217,8 +197,7 @@ DELIMITER ;
 CALL refresh_m3k_moviesbycompanyperyear;
 
 SELECT T.`year`, T.`company_id`, T.`nb_movie`
-FROM
-(
+FROM (
 	SELECT T.`year`, T.`company_id`, T.`nb_movie`,
 	@year_rank := IF(@current_year = T.`year`, @year_rank + 1, 1) AS `year_rank`,
 	@current_year := T.`year`
@@ -230,9 +209,12 @@ WHERE year_rank <= 3;
 # ~5 sec on Macbook Pro mid-2010
 # ~4 sec on Macbook Pro late-2013
 SELECT P.`id` FROM `person` P 
-WHERE 
-P.`birthdate` IS NOT NULL AND P.`deathdate` IS NULL AND
-(P.`trivia` LIKE "%opera singer%" OR P.`minibiography` LIKE "%opera singer%") 
+WHERE P.`birthdate` IS NOT NULL
+AND P.`deathdate` IS NULL
+AND (
+	P.`trivia` LIKE "%opera singer%"
+    OR P.`minibiography` LIKE "%opera singer%"
+) 
 ORDER BY P.`birthdate` DESC;
 
 #m List 10 most ambiguous credits (pairs of people and productions) ordered by the degree of ambiguity.
@@ -242,22 +224,18 @@ ORDER BY P.`birthdate` DESC;
 # ~25 sec on Macbook Pro late-2013
 SELECT DISTINCT C.person_id, C.production_id, N.`number`*T.`number` AS `number`
 FROM `casting` C
-INNER JOIN
-(
+INNER JOIN (
 	SELECT N.person_id, COUNT(N.id) AS `number`
 	FROM `name` N
 	GROUP BY N.person_id
     HAVING `number` > 1
-) N
-ON C.person_id = N.person_id
-INNER JOIN
-(
+) N ON C.person_id = N.person_id
+INNER JOIN (
 	SELECT T.production_id, COUNT(T.id) AS `number`
 	FROM `title` T
 	GROUP BY T.production_id
     HAVING `number` > 1
-) T
-ON C.production_id = T.production_id
+) T ON C.production_id = T.production_id
 ORDER BY number DESC
 LIMIT 0,10;
 
