@@ -14,6 +14,7 @@ class PersondetailsView extends ILARIA_ApplicationView
 
         // SCUD buttons
         $this->output("<div class=\"col-md-5\" style=\"text-align:right\">");
+        $this->output("<a class=\"btn btn-primary btn-md\" href=\"" . ILARIA_ConfigurationGlobal::buildRequestChain("milestone3", "display", array('q' => 'b', 'actorid' => $data['infos']['id'])) . "\" role=\"button\"><span class=\"glyphicon glyphicon-play-circle\" aria-hidden=\"true\"></span> launch MS3 query B</a>");
         $this->output("<a class=\"btn btn-danger btn-md\" href=\"" . ILARIA_ConfigurationGlobal::buildRequestChain("person", "update", array('id' => $data['infos']['id'])) . "\" role=\"button\"><span class=\"glyphicon glyphicon-pencil\" aria-hidden=\"true\"></span> update</a>");
         $this->output("<a class=\"btn btn-danger btn-md\" href=\"#\" role=\"button\" " . ILARIA_ApplicationAsynchronous::getModalOnClickShow(ILARIA_ConfigurationGlobal::buildRequestChain('person', 'delete', array('id' => $data['infos']['id'])), false) . "><span class=\"glyphicon glyphicon-trash\" aria-hidden=\"true\"></span> delete</a>");
         $this->output("</div>");
